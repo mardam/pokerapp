@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:text="Speichern"
         android:id="@+id/btnSafe"
-        android:layout_below="@+id/sGender"
+        android:layout_below="@+id/etName"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="saveChanges"/>

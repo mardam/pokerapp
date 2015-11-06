@@ -41,14 +41,13 @@ public class EveningConnector {
     }
 
     public int getIDForLocation(Location location, SQLiteDatabase connection){
-        ArrayList<String> ret = new ArrayList<String>();
+        ArrayList<String> ret = new ArrayList<>();
 
         //Toast.makeText(this, location.getName(), Toast.LENGTH_LONG).show();
 
         Cursor cursor  = connection.rawQuery("SELECT id FROM locations WHERE name = '" + location.getName() + "';", null);
         cursor.moveToLast();
-        int entry = cursor.getInt(cursor.getColumnIndex("id"));
-        return entry;
+        return cursor.getInt(cursor.getColumnIndex("id"));
     }
 
 

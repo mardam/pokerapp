@@ -40,10 +40,10 @@ public class LocationManagement extends ActionBarActivity {
 
     public ArrayList<String> getLocations(){
         database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
-        ArrayList<String> ret = new ArrayList<String>();
+        ArrayList<String> ret = new ArrayList<>();
 
         Cursor cursor  = database.rawQuery("SELECT name FROM locations", null);
-        while(cursor.moveToNext() == true){
+        while(cursor.moveToNext()){
             String entry = cursor.getString(cursor.getColumnIndex("name"));
             ret.add(entry);
         }

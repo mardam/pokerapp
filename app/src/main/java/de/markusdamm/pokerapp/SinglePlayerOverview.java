@@ -55,6 +55,44 @@ public class SinglePlayerOverview extends ActionBarActivity {
         addSwitchListener();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        getMenuInflater().inflate(R.menu.menu_single_player_overview, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_delete) {
+            if (ps.getParticipations() > 0){
+                Toast.makeText(this, ps.getPlayer().getName() +
+                        " hat bereits an Abenden teilgenommen und kann deshalb nicht gelöscht werden.",
+                        Toast.LENGTH_LONG).show();
+            } else {
+                String sqlState = "DELETE FROM players " +
+                        "WHERE id = " + ps.getPlayer().getId();
+                database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
+                database.execSQL(sqlState);
+                database.close();
+                Toast.makeText(this, ps.getPlayer().getName() + " gelöscht.",
+                        Toast.LENGTH_LONG).show();
+                Intent intent = new Intent();
+                setResult(7, intent);
+                finish();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
 
     public Player getPlayer(int id){

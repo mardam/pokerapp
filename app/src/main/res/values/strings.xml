@@ -3,6 +3,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Optionen</string>
+    <string name="action_delete">löschen</string>
     <string name="title_activity_player_management">Spieler verwalten</string>
     <string name="title_activity_evening_management">Abende verwalten</string>
     <string name="title_activity_society_management">Gesellschaften verwalten</string>

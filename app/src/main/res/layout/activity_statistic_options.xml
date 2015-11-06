@@ -38,6 +38,14 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spLocation"
+        android:layout_below="@+id/textView15"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -52,7 +60,7 @@
         android:layout_height="wrap_content"
         android:text="Auswahlkriterium 1"
         android:id="@+id/textView12"
-        android:layout_below="@+id/spGender"
+        android:layout_below="@+id/spLocation"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -71,6 +79,15 @@
         android:text="Auswahlkriterium 3"
         android:id="@+id/textView14"
         android:layout_below="@+id/spChoice2"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ort"
+        android:id="@+id/textView15"
+        android:layout_below="@+id/spGender"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

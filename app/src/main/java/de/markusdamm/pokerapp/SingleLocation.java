@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -26,8 +28,9 @@ public class SingleLocation extends ActionBarActivity {
     private SQLiteDatabase database;
     private EditText etName;
     private Location location;
-    private int id;
+    private int locationId;
     private ListView evenings;
+    private ArrayList<String> eveningList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +38,8 @@ public class SingleLocation extends ActionBarActivity {
         setContentView(R.layout.activity_single_location);
 
         Intent intent = getIntent();
-        this.id = intent.getIntExtra("id", -1);
-        setLocation(id);
+        this.locationId = intent.getIntExtra("id", -1);
+        setLocation();
         etName = (EditText)findViewById(R.id.etName);
         etName.setText(location.getName());
         this.setTitle(location.getName());
@@ -45,11 +48,49 @@ public class SingleLocation extends ActionBarActivity {
 
     }
 
-    public void setLocation(int id){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+
+        getMenuInflater().inflate(R.menu.menu_single_location, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_delete) {
+            if (eveningList.isEmpty()){
+                String sqlState = "DELETE FROM locations " +
+                        "WHERE id = " + locationId;
+                database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
+                database.execSQL(sqlState);
+                database.close();
+                Toast.makeText(this, location.getName() + " gelöscht.",
+                        Toast.LENGTH_LONG).show();
+                Intent intent = new Intent();
+                setResult(7, intent);
+                finish();
+            } else {
+                Toast.makeText(this, location.getName() +
+                                " war bereits Austragungsort für Abende und kann deshalb nicht gelöscht werden.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void setLocation(){
         database = openOrCreateDatabase("pokerDB", MODE_PRIVATE, null);
 
 
-        Cursor cursor  = database.rawQuery("SELECT id, name FROM locations WHERE id = " + id, null);
+        Cursor cursor  = database.rawQuery("SELECT id, name FROM locations WHERE id = " + locationId, null);
         cursor.moveToLast();
         String name = cursor.getString(cursor.getColumnIndex("name"));
         location = new Location(name);
@@ -66,7 +107,7 @@ public class SingleLocation extends ActionBarActivity {
         if (cursor.getInt(0) == 0){
             sqlState = "UPDATE locations " +
                     "SET name = '" + newLoc.getName() + "' " +
-                    "WHERE id = " + id;
+                    "WHERE id = " + locationId;
             database.execSQL(sqlState);
             Toast.makeText(this, "Ort gespeichert", Toast.LENGTH_LONG).show();
             cursor.close();
@@ -89,7 +130,7 @@ public class SingleLocation extends ActionBarActivity {
         ArrayList<String> ret = new ArrayList<>();
 
         Cursor cursor  = database.rawQuery("SELECT name FROM evenings " +
-                "WHERE location = " + id
+                "WHERE location = " + locationId
                 , null);
         while(cursor.moveToNext()){
             String entry = cursor.getString(cursor.getColumnIndex("name"));
@@ -101,7 +142,7 @@ public class SingleLocation extends ActionBarActivity {
     }
 
     public void fillListView(){
-        ArrayList<String> eveningList = getEvenings();
+        eveningList = getEvenings();
         ListAdapter listenAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, eveningList);
         evenings.setAdapter(listenAdapter);
     }

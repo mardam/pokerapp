@@ -98,11 +98,19 @@
         </activity>
         <activity
             android:name=".StatisticOptions"
-            android:label="@string/title_activity_statistic_options" >
+            android:label="@string/title_activity_statistic_options"
+            android:parentActivityName=".Statistic" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.markusdamm.pokerapp.Statistic" />
         </activity>
         <activity
             android:name=".SingleLocation"
-            android:label="@string/title_activity_single_location" >
+            android:label="@string/title_activity_single_location"
+            android:parentActivityName=".LocationManagement" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.markusdamm.pokerapp.LocationManagement" />
         </activity>
     </application>
 

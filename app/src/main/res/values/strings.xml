@@ -23,4 +23,5 @@
     <string name="title_activity_player_adder_to_evening">Spieler zu Abend hinzufügen</string>
     <string name="title_activity_statistic">Statistik</string>
     <string name="title_activity_statistic_options">Statistikoptionen</string>
+    <string name="title_activity_single_location">SingleLocation</string>
 </resources>

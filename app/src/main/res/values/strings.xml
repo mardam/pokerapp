@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">PokerApp</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Optionen</string>
+    <string name="title_activity_player_management">Spieler verwalten</string>
+    <string name="title_activity_evening_management">Abende verwalten</string>
+    <string name="title_activity_society_management">Gesellschaften verwalten</string>
+    <string name="title_activity_new_evening">neuen Abend erstellen</string>
+    <string name="title_activity_date_picker">DatePickerActivity</string>
+    <string name="title_activity_location_management">Orte verwalten</string>
+
+
+
+
+
+
+    <string name="title_activity_single_evening">Abendverwaltung</string>
+    <string name="title_activity_list_item_player">list_item_player</string>
+    <string name="title_activity_player_looses">Spielerausscheidung</string>
+    <string name="title_activity_single_player_overview">SinglePlayerOverview</string>
+    <string name="title_activity_player_adder_to_evening">Spieler zu Abend hinzufügen</string>
+    <string name="title_activity_statistic">Statistik</string>
+    <string name="title_activity_statistic_options">Statistikoptionen</string>
+</resources>

@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="de.markusdamm.pokerapp.SingleEvening">
+    <item android:id="@+id/action_add" android:title="Spieler hinzufügen"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_entrance" android:title="Spielereinstieg"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_loose" android:title="Spielerausschied"
+        android:orderInCategory="100" app:showAsAction="never" />
+    <item android:id="@+id/action_substitude" android:title="Spielerersetzung"
+        android:orderInCategory="100" app:showAsAction="never" />
+
+</menu>

@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Abende verwalten"
+        android:id="@+id/manageEvenings"
+        android:onClick="manageEvenings"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Spieler verwalten"
+        android:id="@+id/managePlayers"
+        android:onClick="managePlayers"
+        android:layout_gravity="center_horizontal" />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Statistik anzeigen"
+        android:id="@+id/showStatistic"
+        android:onClick="showStatistic"
+        android:layout_gravity="center_horizontal" />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Orte verwalten"
+        android:id="@+id/managePlaces"
+        android:onClick="managePlaces"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:text="Gesellschaften verwalten"
+        android:id="@+id/manageSocieties"
+        android:onClick="manageSocieties"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

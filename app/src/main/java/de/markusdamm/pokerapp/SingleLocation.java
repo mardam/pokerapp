@@ -6,9 +6,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import de.markusdamm.pokerapp.data.Evening;
 import de.markusdamm.pokerapp.data.Gender;
@@ -22,6 +27,7 @@ public class SingleLocation extends ActionBarActivity {
     private EditText etName;
     private Location location;
     private int id;
+    private ListView evenings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +40,13 @@ public class SingleLocation extends ActionBarActivity {
         etName = (EditText)findViewById(R.id.etName);
         etName.setText(location.getName());
         this.setTitle(location.getName());
-        //fillStatistic();
-        //fillListView();
+        evenings = (ListView)findViewById((R.id.lvEvenings));
+        fillListView();
 
     }
 
     public void setLocation(int id){
-        database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
+        database = openOrCreateDatabase("pokerDB", MODE_PRIVATE, null);
 
 
         Cursor cursor  = database.rawQuery("SELECT id, name FROM locations WHERE id = " + id, null);
@@ -76,6 +82,28 @@ public class SingleLocation extends ActionBarActivity {
         database.close();
 
 
+    }
+
+    public ArrayList<String> getEvenings(){
+        database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
+        ArrayList<String> ret = new ArrayList<>();
+
+        Cursor cursor  = database.rawQuery("SELECT name FROM evenings " +
+                "WHERE location = " + id
+                , null);
+        while(cursor.moveToNext()){
+            String entry = cursor.getString(cursor.getColumnIndex("name"));
+            ret.add(entry);
+        }
+        cursor.close();
+        database.close();
+        return ret;
+    }
+
+    public void fillListView(){
+        ArrayList<String> eveningList = getEvenings();
+        ListAdapter listenAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, eveningList);
+        evenings.setAdapter(listenAdapter);
     }
 
 }

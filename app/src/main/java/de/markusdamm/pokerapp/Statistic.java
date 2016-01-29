@@ -42,7 +42,7 @@ public class Statistic extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
         if (location == null){
-            location = "Dresden, ZELLE A";
+            location = "alle";
         }
         gender = Gender.BOTH_INT;
         choice1 = PlayerStatistic.stWorsePlayer;

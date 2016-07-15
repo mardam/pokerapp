@@ -52,6 +52,7 @@ public class LocationManagement extends ActionBarActivity {
             String entry = cursor.getString(cursor.getColumnIndex("name"));
             locationList.add(entry);
         }
+        cursor.close();
         database.close();
     }
 

@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -21,6 +22,7 @@ import java.util.Set;
 
 import de.markusdamm.pokerapp.R;
 import de.markusdamm.pokerapp.data.Gender;
+import de.markusdamm.pokerapp.data.Location;
 import de.markusdamm.pokerapp.data.Player;
 import de.markusdamm.pokerapp.data.PlayerStatistic;
 import de.markusdamm.pokerapp.utils.ArrayAdapterStatistic;
@@ -33,12 +35,15 @@ public class Statistic extends ActionBarActivity {
     private SQLiteDatabase database;
     private int gender;
     private TextView tv;
-    private String choice1, choice2, choice3;
+    private String choice1, choice2, choice3, location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistic);
+        if (location == null){
+            location = "alle";
+        }
         gender = Gender.BOTH_INT;
         choice1 = PlayerStatistic.stWorsePlayer;
         choice2 = PlayerStatistic.stMinuits;
@@ -71,6 +76,7 @@ public class Statistic extends ActionBarActivity {
             intent.putExtra("choice1", choice1);
             intent.putExtra("choice2", choice2);
             intent.putExtra("choice3", choice3);
+            intent.putExtra("location", location);
             startActivityForResult(intent, 0);
             return true;
         }
@@ -121,7 +127,9 @@ public class Statistic extends ActionBarActivity {
         int minuits = 0;
         String sqlState = "SELECT p.time, e.date FROM places p " +
                 "INNER JOIN evenings e ON e.id = p.evening " +
-                "WHERE nr>0 AND loser = " + pl.getId() + ";";
+                "WHERE nr>0 AND loser = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                ";";
         Cursor cursor = database.rawQuery(sqlState,null);
         while(cursor.moveToNext()){
             DateFormat df = DateFormats.getDataBaseFormat();
@@ -144,8 +152,11 @@ public class Statistic extends ActionBarActivity {
 
 
     public int getGetSumOfPlaces(Player pl){
-        String sqlState = "SELECT sum(nr) FROM places " +
-                "WHERE nr>0 AND loser = " + pl.getId() + ";";
+        String sqlState = "SELECT sum(p.nr) FROM places p " +
+                "INNER JOIN evenings e ON e.id = p.evening " +
+                "WHERE p.nr>0 AND p.loser = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
@@ -153,9 +164,12 @@ public class Statistic extends ActionBarActivity {
 
 
     public int getParticipators(Player pl){
-        String sqlState = "SELECT count(p1.id) FROM places p1 " +
-                "Inner JOIN places p2 ON p1.evening = p2.evening " +
-                "WHERE p2.loser = " + pl.getId() + ";";
+        String sqlState = "SELECT count(p.id) FROM places p " +
+                "Inner JOIN places p2 ON p.evening = p2.evening " +
+                "INNER JOIN evenings e ON e.id = p.evening " +
+                "WHERE p2.loser = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
@@ -164,14 +178,22 @@ public class Statistic extends ActionBarActivity {
 
 
     public int getNumberOfParticipations(Player pl){
-        String sqlState = "SELECT count(evening) FROM places WHERE nr > 0 AND loser = " + pl.getId() + ";";
+        String sqlState = "SELECT count(p.evening) FROM places p " +
+                "INNER JOIN evenings e ON e.id = p.evening " +
+                "WHERE p.nr > 0 AND p.loser = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
     }
 
     public int getBeatenPlayers(Player pl){
-        String sqlState = "SELECT count(loser) FROM places WHERE nr > 0 AND winner = " + pl.getId() + ";";
+        String sqlState = "SELECT count(p.loser) FROM places p " +
+                "INNER JOIN evenings e ON e.id = p.evening " +
+                "WHERE p.nr > 0 AND p.winner = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
@@ -179,14 +201,24 @@ public class Statistic extends ActionBarActivity {
 
 
     public int getNumberOfWins(Player pl){
-        String sqlState = "SELECT count(evening) FROM places WHERE nr = 1 AND loser = " + pl.getId() + ";";
+        String sqlState = "SELECT count(p.evening) FROM places p " +
+                "INNER JOIN evenings e ON e.id = p.evening " +
+                "WHERE p.nr = 1 AND p.loser = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
     }
 
     public int getBestPlace(Player pl){
-        String sqlState = "SELECT min(nr) FROM places WHERE nr > 0 AND loser = " + pl.getId() + ";";
+
+        String sqlState = "SELECT min(p.nr) FROM places p " +
+                "INNER JOIN evenings e ON e.id = p.evening " +
+                "WHERE p.nr > 0 AND p.loser = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                 ";";
+        //Toast.makeText(this, sqlState, Toast.LENGTH_SHORT).show();
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
@@ -212,6 +244,25 @@ public class Statistic extends ActionBarActivity {
     }
 
 
+    private String getLocationStringForSqlQuery(){
+        if (location.equals("alle")) {
+            return "";
+        }
+        int id = getIDForLocation();
+        return " AND e.location = " + id;
+    }
+
+    public int getIDForLocation(){
+
+        //database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
+        Cursor cursor = database.rawQuery("SELECT id FROM locations WHERE name = '" + location + "';", null);
+        cursor.moveToLast();
+        int entry = cursor.getInt(cursor.getColumnIndex("id"));
+        cursor.close();
+        //database.close();
+        return entry;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -222,6 +273,8 @@ public class Statistic extends ActionBarActivity {
             choice2 = data.getStringExtra("choice2");
             choice3 = data.getStringExtra("choice3");
             tv.setText(choice1 + " | " + choice2 + " | " + choice3);
+            location = data.getStringExtra("location");
+            getPlayerStatistics();
             fillList();
         }
     }

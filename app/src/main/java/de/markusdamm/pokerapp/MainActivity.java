@@ -49,6 +49,10 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    public void showRecords(View view) {
+
+    }
+
     public void createDatabase(){
         SQLiteDatabase database;
         database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);

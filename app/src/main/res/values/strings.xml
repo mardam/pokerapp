@@ -12,10 +12,6 @@
     <string name="title_activity_location_management">Orte verwalten</string>
 
 
-
-
-
-
     <string name="title_activity_single_evening">Abendverwaltung</string>
     <string name="title_activity_list_item_player">list_item_player</string>
     <string name="title_activity_player_looses">Spielerausscheidung</string>
@@ -24,4 +20,5 @@
     <string name="title_activity_statistic">Statistik</string>
     <string name="title_activity_statistic_options">Statistikoptionen</string>
     <string name="title_activity_single_location">SingleLocation</string>
+    <string name="title_activity_records">Rekorde</string>
 </resources>

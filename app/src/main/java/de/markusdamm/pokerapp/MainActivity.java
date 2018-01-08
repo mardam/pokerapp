@@ -50,7 +50,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void showRecords(View view) {
-
+        Intent intent = new Intent(this, Records.class);
+        startActivity(intent);
     }
 
     public void createDatabase(){

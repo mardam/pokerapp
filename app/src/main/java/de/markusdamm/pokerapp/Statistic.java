@@ -115,6 +115,7 @@ public class Statistic extends ActionBarActivity {
             ps.setMinuits(getMinuits(pl));
             ps.setParticipators(getParticipators(pl));
             ps.setSumOfPlaces(getGetSumOfPlaces(pl));
+            ps.setMultikills(getMultikills(pl));
             pStatistics.add(ps);
 
 
@@ -150,6 +151,21 @@ public class Statistic extends ActionBarActivity {
         return minuits;
     }
 
+
+    public int getMultikills(Player pl) {
+        String sqlState = "SELECT count(*)\n" +
+                "FROM (\n" +
+                "SELECT pl.name as player, e.name as name, time, count(*) as value, count(DISTINCT p.winner) as winners\n" +
+                "FROM places as p, evenings as e, players as pl\n" +
+                "WHERE p.evening = e.id and e.name != 'Abend 1' and p.nr != 1 and pl.id = p.winner and pl.id = " + pl.getId() + "\n" +
+                "group by time\n" +
+                ") WHERE value > 1 and winners = 1\n" +
+                "ORDER BY value DESC, player";
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
 
     public int getGetSumOfPlaces(Player pl){
         String sqlState = "SELECT sum(p.nr) FROM places p " +
@@ -218,7 +234,6 @@ public class Statistic extends ActionBarActivity {
                 "WHERE p.nr > 0 AND p.loser = " + pl.getId() +
                 getLocationStringForSqlQuery() +
                  ";";
-        //Toast.makeText(this, sqlState, Toast.LENGTH_SHORT).show();
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);

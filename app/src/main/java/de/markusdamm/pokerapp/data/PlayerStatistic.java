@@ -14,6 +14,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     private int beatenPlayers;
     private int participators;
     private int sumOfPlaces;
+    private int multikills;
     private Player player;
     private ArrayList<String> strings;
 
@@ -28,6 +29,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     public final static String stSumOfPlaces = "Summe der Plätze";
     public final static String stWorsePlayer = "Anzahl schlechtere Spieler bei Teilnahme";
     public final static String stAveragePlace = "Durchschnittliche Platzierung";
+    public final static String stMultikills = "Multikills";
 
 
     public PlayerStatistic(Player player){
@@ -68,6 +70,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         return player;
     }
 
+    public int getMultikills() {
+        return multikills;
+    }
+
 
     public void setSumOfPlaces(int sumOfPlaces){
         this.sumOfPlaces = sumOfPlaces;
@@ -97,6 +103,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         this.participators = participators;
     }
 
+    public void setMultikills(int multikills) {
+        this.multikills = multikills;
+    }
+
 
 
     public void setValues(String value1, String value2, String value3){
@@ -118,6 +128,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         statisticList.add(stSumOfPlaces + ": " + sumOfPlaces);
         statisticList.add(stWorsePlayer + ": " + Integer.toString(participators - sumOfPlaces));
         statisticList.add(stAveragePlace + ": " + ((double)sumOfPlaces) / participations);
+        statisticList.add(stMultikills + ": " + multikills);
 
 
 
@@ -145,6 +156,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
                 return getParticipations();
             case stAveragePlace:
                 return sumOfPlaces / participations;
+            case stMultikills:
+                return getMultikills();
             default:
                 return -1;
         }
@@ -178,6 +191,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         strings.add(stSumOfPlaces);
         strings.add(stWorsePlayer);
         strings.add(stAveragePlace);
+        strings.add(stMultikills);
     }
 
     public ArrayList<String> getStrings(){

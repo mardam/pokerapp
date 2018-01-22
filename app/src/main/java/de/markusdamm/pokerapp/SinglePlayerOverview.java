@@ -128,7 +128,7 @@ public class SinglePlayerOverview extends ActionBarActivity {
         ps.setMinuits(getMinuits());
         ps.setParticipators(getParticipators());
         ps.setSumOfPlaces(getGetSumOfPlaces());
-
+        ps.setMultikills(getMultikills());
 
         database.close();
     }
@@ -204,6 +204,21 @@ public class SinglePlayerOverview extends ActionBarActivity {
 
     public int getBestPlace(){
         String sqlState = "SELECT min(nr) FROM places WHERE nr > 0 AND loser = " + ps.getPlayer().getId() + ";";
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public int getMultikills() {
+        String sqlState = "SELECT count(*)\n" +
+                "FROM (\n" +
+                "SELECT pl.name as player, e.name as name, time, count(*) as value, count(DISTINCT p.winner) as winners\n" +
+                "FROM places as p, evenings as e, players as pl\n" +
+                "WHERE p.evening = e.id and e.name != 'Abend 1' and p.nr != 1 and pl.id = p.winner and pl.id = " + ps.getPlayer().getId() + "\n" +
+                "group by time\n" +
+                ") WHERE value > 1 and winners = 1\n" +
+                "ORDER BY value DESC, player";
+
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);

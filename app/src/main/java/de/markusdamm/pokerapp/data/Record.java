@@ -53,6 +53,7 @@ public class Record {
         ret.add("Schnellster Letzter");
         ret.add("Multikills");
         ret.add("Meiste Teilnehmer");
+        ret.add("Sieger");
 
         return(ret);
     }
@@ -84,6 +85,9 @@ public class Record {
         }
         if (kind == "Schnellster Letzter") {
             return getFastestLast();
+        }
+        if (kind == "Sieger") {
+            return getWinners();
         }
         throw new IllegalArgumentException("Illegal kind in getDBRequest for Record" + kind);
     }
@@ -165,6 +169,13 @@ public class Record {
                 "ORDER BY value ASC";
     }
 
+    private static String getWinners() {
+        return "SELECT e.name as name, pl2.name as player, pl.name as value\n" +
+                "FROM evenings as e, players as pl, places as p, players as pl2\n" +
+                "WHERE e.id = p.evening and p.nr = 2 and p.loser = pl.id and pl2.id = p.winner\n" +
+                "order by e.date ASC";
+    }
+
     public static String getType(String kind) {
         if (kind == "Längster Abend") {
             return "minuts";
@@ -192,6 +203,9 @@ public class Record {
         }
         if (kind == "Schnellster Letzter") {
             return "minuts+player";
+        }
+        if (kind == "Sieger") {
+            return "number+player";
         }
         throw new IllegalArgumentException("Illegal kind for type in Records");
     }

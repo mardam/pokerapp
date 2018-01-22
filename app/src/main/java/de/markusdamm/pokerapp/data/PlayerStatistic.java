@@ -2,6 +2,8 @@ package de.markusdamm.pokerapp.data;
 
 import java.util.ArrayList;
 
+import de.markusdamm.pokerapp.utils.Utils;
+
 /**
  * Created by Markus Damm on 30.03.2015.
  */
@@ -112,7 +114,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         statisticList.add(stBestPlace + ": " + bestPlace);
         statisticList.add(stWins + ": " + wins);
         statisticList.add(stParticipations + ": " + participations);
-        statisticList.add(stMinuits + ": " + minuits + " Minuten bzw. " + formatTimeToString());
+        statisticList.add(stMinuits + ": " + minuits + " Minuten bzw. " + Utils.formatTimeToString(minuits));
         statisticList.add(stBeatenPlayers + ": " + beatenPlayers);
         statisticList.add(stNumberOfOponents + ": " + participators);
         statisticList.add(stSumOfPlaces + ": " + sumOfPlaces);
@@ -148,22 +150,6 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
             default:
                 return -1;
         }
-    }
-
-
-    public String formatTimeToString(){
-        int days = (int)Math.floor(minuits/(60*24));
-        int hours = (int)Math.floor((minuits - days * 60 * 24)/60);
-        String hour = hours + "";
-        if (hours <10){
-            hour = "0" + hour;
-        }
-        int rest = (int)Math.floor(minuits - days * 60 * 24 - hours * 60);
-        String res = rest + "";
-        if (rest < 10){
-            res = "0" + rest;
-        }
-        return days + "d" + hour + "h" + res + "m";
     }
 
 

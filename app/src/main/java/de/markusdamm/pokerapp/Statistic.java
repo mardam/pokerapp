@@ -108,7 +108,9 @@ public class Statistic extends ActionBarActivity {
         for (Player pl: players){
             PlayerStatistic ps = new PlayerStatistic(pl);
             ps.setBestPlace(getBestPlace(pl));
-            ps.setWins(getNumberOfWins(pl));
+            ps.setWins(getNumberOfTopPositions(pl,1));
+            ps.setHeadUps(getNumberOfTopPositions(pl,2));
+            ps.setPodiums(getNumberOfTopPositions(pl,3));
             ps.setBeatenPlayers(getBeatenPlayers(pl));
             ps.setParticipations(getNumberOfParticipations(pl));
 
@@ -216,10 +218,10 @@ public class Statistic extends ActionBarActivity {
     }
 
 
-    public int getNumberOfWins(Player pl){
+    public int getNumberOfTopPositions(Player pl, int worstPosition){
         String sqlState = "SELECT count(p.evening) FROM places p " +
                 "INNER JOIN evenings e ON e.id = p.evening " +
-                "WHERE p.nr = 1 AND p.loser = " + pl.getId() +
+                "WHERE p.nr <= " + worstPosition + " AND p.loser = " + pl.getId() +
                 getLocationStringForSqlQuery() +
                 ";";
         Cursor cursor = database.rawQuery(sqlState, null);

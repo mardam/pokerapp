@@ -121,7 +121,9 @@ public class SinglePlayerOverview extends ActionBarActivity {
     public void fillStatistic(){
         database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
         ps.setBestPlace(getBestPlace());
-        ps.setWins(getNumberOfWins());
+        ps.setWins(getNumberOfTopPositions(1));
+        ps.setHeadUps(getNumberOfTopPositions(2));
+        ps.setPodiums(getNumberOfTopPositions(3));
         ps.setBeatenPlayers(getBeatenPlayers());
         ps.setParticipations(getNumberOfParticipations());
 
@@ -195,8 +197,8 @@ public class SinglePlayerOverview extends ActionBarActivity {
     }
 
 
-    public int getNumberOfWins(){
-        String sqlState = "SELECT count(evening) FROM places WHERE nr = 1 AND loser = " + ps.getPlayer().getId() + ";";
+    public int getNumberOfTopPositions(int worstPosition){
+        String sqlState = "SELECT count(evening) FROM places WHERE nr <= " + worstPosition + " AND loser = " + ps.getPlayer().getId() + ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);

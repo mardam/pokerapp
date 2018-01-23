@@ -9,6 +9,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
 
     private int bestPlace;
     private int wins;
+    private int headUps;
+    private int podiums;
     private int participations;
     private int minuits;
     private int beatenPlayers;
@@ -22,6 +24,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
 
     public final static String stBestPlace = "Beste Platzierung";
     public final static String stWins = "Siege";
+    public final static String stHeadUps = "Heads-Ups";
+    public final static String stPodiums = "Podiumsplätze";
     public final static String stParticipations = "Anzahl an Teilnahmen";
     public final static String stMinuits = "Gespielte Zeit";
     public final static String stBeatenPlayers = "Anzahl rausgeworfener Spieler";
@@ -75,6 +79,15 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     }
 
 
+    public int getPodiums() {
+        return podiums;
+    }
+
+    public int getHeadUps() {
+        return headUps;
+    }
+
+
     public void setSumOfPlaces(int sumOfPlaces){
         this.sumOfPlaces = sumOfPlaces;
     }
@@ -107,6 +120,14 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         this.multikills = multikills;
     }
 
+    public void setPodiums(int podiums) {
+        this.podiums = podiums;
+    }
+
+    public void setHeadUps(int headUps) {
+        this.headUps = headUps;
+    }
+
 
 
     public void setValues(String value1, String value2, String value3){
@@ -121,6 +142,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         ArrayList<String> statisticList = new ArrayList<>();
         statisticList.add(stBestPlace + ": " + bestPlace);
         statisticList.add(stWins + ": " + wins);
+        statisticList.add(stHeadUps + ": " + headUps);
+        statisticList.add(stPodiums + ": " + podiums);
         statisticList.add(stParticipations + ": " + participations);
         statisticList.add(stMinuits + ": " + minuits + " Minuten bzw. " + formatTimeToString());
         statisticList.add(stBeatenPlayers + ": " + beatenPlayers);
@@ -158,6 +181,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
                 return sumOfPlaces / participations;
             case stMultikills:
                 return getMultikills();
+            case stHeadUps:
+                return getHeadUps();
+            case stPodiums:
+                return getPodiums();
             default:
                 return -1;
         }
@@ -184,6 +211,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         strings.clear();
         strings.add(stBestPlace);
         strings.add(stWins);
+        strings.add(stHeadUps);
+        strings.add(stPodiums);
         strings.add(stParticipations);
         strings.add(stMinuits);
         strings.add(stBeatenPlayers);

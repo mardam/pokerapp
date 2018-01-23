@@ -114,7 +114,7 @@ public class Statistic extends ActionBarActivity {
             ps.setPodiums(getNumberOfTopPositions(pl,3));
             ps.setBeatenPlayers(getBeatenPlayers(pl));
             ps.setParticipations(getNumberOfParticipations(pl));
-
+            ps.setLastPlaces(getLastPlaces(pl));
             ps.setMinuits(getMinuits(pl));
             ps.setParticipators(getParticipators(pl));
             ps.setSumOfPlaces(getGetSumOfPlaces(pl));
@@ -249,6 +249,17 @@ public class Statistic extends ActionBarActivity {
                 "WHERE p.nr > 0 AND p.loser = " + pl.getId() +
                 getLocationStringForSqlQuery() +
                 ";";
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public int getLastPlaces(Player pl) {
+        String sqlState = "SELECT count(*)\n" +
+                "FROM evenings as e, places as p, players as pl\n" +
+                "WHERE e.id = p.evening and pl.id = p.loser AND e.name != 'Abend 1'\n" +
+                "AND (p.evening, p.nr) IN (SELECT evening, max(nr) FROM places group by evening) AND pl.id = " + pl.getId() +
+                getLocationStringForSqlQuery() + ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);

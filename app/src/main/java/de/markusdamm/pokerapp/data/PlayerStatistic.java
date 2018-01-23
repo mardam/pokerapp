@@ -1,6 +1,7 @@
 package de.markusdamm.pokerapp.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Markus Damm on 30.03.2015.
@@ -12,6 +13,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     private int wins;
     private int headUps;
     private int podiums;
+    private int lastPlaces;
     private int participations;
     private int minuits;
     private int beatenPlayers;
@@ -36,6 +38,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     public final static String stWorsePlayer = "Anzahl schlechtere Spieler bei Teilnahme";
     public final static String stAveragePlace = "Durchschnittliche Platzierung";
     public final static String stMultikills = "Multikills";
+    public final static String stLastPlaces = "Letzte Plätze";
 
 
     public PlayerStatistic(Player player){
@@ -93,6 +96,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         return headUps;
     }
 
+    public int getLastPlaces() {
+        return lastPlaces;
+    }
+
 
     public void setSumOfPlaces(int sumOfPlaces){
         this.sumOfPlaces = sumOfPlaces;
@@ -138,6 +145,9 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         this.headUps = headUps;
     }
 
+    public void setLastPlaces(int lastPlaces) {
+        this.lastPlaces = lastPlaces;
+    }
 
 
     public void setValues(String value1, String value2, String value3){
@@ -155,6 +165,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         statisticList.add(stWins + ": " + wins);
         statisticList.add(stHeadUps + ": " + headUps);
         statisticList.add(stPodiums + ": " + podiums);
+        statisticList.add(stLastPlaces + ": " + lastPlaces);
         statisticList.add(stParticipations + ": " + participations);
         statisticList.add(stMinuits + ": " + minuits + " Minuten bzw. " + formatTimeToString());
         statisticList.add(stBeatenPlayers + ": " + beatenPlayers);
@@ -198,6 +209,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
                 return getPodiums();
             case stWorstPlace:
                 return getWorstPlace();
+            case stLastPlaces:
+                return getLastPlaces();
             default:
                 return -1;
         }
@@ -227,6 +240,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         strings.add(stWins);
         strings.add(stHeadUps);
         strings.add(stPodiums);
+        strings.add(stLastPlaces);
         strings.add(stParticipations);
         strings.add(stMinuits);
         strings.add(stBeatenPlayers);
@@ -239,6 +253,16 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
 
     public ArrayList<String> getStrings(){
         return strings;
+    }
+
+    public List<String> inverseToSort() {
+        List<String> ret = new ArrayList<>();
+        ret.add(stBestPlace);
+        ret.add(stSumOfPlaces);
+        ret.add(stWorstPlace);
+        ret.add(stLastPlaces);
+
+        return ret;
     }
 
     @Override
@@ -254,7 +278,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
             Integer a = this.getValue(value1);
             Integer b = another.getValue(value1);
             if (a.intValue() != b.intValue()) {
-                if (value1.equals(stBestPlace) || value1.equals(stSumOfPlaces) || value1.equals(stWorstPlace)) {
+                if (inverseToSort().contains(value1)) {
                     return a.compareTo(b);
                 } else {
                     return b.compareTo(a);

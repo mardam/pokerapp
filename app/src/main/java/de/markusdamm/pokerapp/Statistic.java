@@ -108,6 +108,7 @@ public class Statistic extends ActionBarActivity {
         for (Player pl: players){
             PlayerStatistic ps = new PlayerStatistic(pl);
             ps.setBestPlace(getBestPlace(pl));
+            ps.setWorstPlace(getWorstPlace(pl));
             ps.setWins(getNumberOfTopPositions(pl,1));
             ps.setHeadUps(getNumberOfTopPositions(pl,2));
             ps.setPodiums(getNumberOfTopPositions(pl,3));
@@ -159,7 +160,7 @@ public class Statistic extends ActionBarActivity {
                 "FROM (\n" +
                 "SELECT pl.name as player, e.name as name, time, count(*) as value, count(DISTINCT p.winner) as winners\n" +
                 "FROM places as p, evenings as e, players as pl\n" +
-                "WHERE p.evening = e.id and e.name != 'Abend 1' and p.nr != 1 and pl.id = p.winner and pl.id = " + pl.getId() + "\n" +
+                "WHERE p.evening = e.id and e.name != 'Abend 1' and p.nr != 1 and pl.id = p.winner and pl.id = " + pl.getId() + getLocationStringForSqlQuery() + "\n" +
                 "group by time\n" +
                 ") WHERE value > 1 and winners = 1\n" +
                 "ORDER BY value DESC, player";
@@ -236,6 +237,18 @@ public class Statistic extends ActionBarActivity {
                 "WHERE p.nr > 0 AND p.loser = " + pl.getId() +
                 getLocationStringForSqlQuery() +
                  ";";
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public int getWorstPlace(Player pl){
+
+        String sqlState = "SELECT max(p.nr) FROM places p " +
+                "INNER JOIN evenings e ON e.id = p.evening " +
+                "WHERE p.nr > 0 AND p.loser = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);

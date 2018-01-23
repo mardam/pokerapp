@@ -121,6 +121,7 @@ public class SinglePlayerOverview extends ActionBarActivity {
     public void fillStatistic(){
         database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
         ps.setBestPlace(getBestPlace());
+        ps.setWorstPlace(getWorstPlace());
         ps.setWins(getNumberOfTopPositions(1));
         ps.setHeadUps(getNumberOfTopPositions(2));
         ps.setPodiums(getNumberOfTopPositions(3));
@@ -206,6 +207,13 @@ public class SinglePlayerOverview extends ActionBarActivity {
 
     public int getBestPlace(){
         String sqlState = "SELECT min(nr) FROM places WHERE nr > 0 AND loser = " + ps.getPlayer().getId() + ";";
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public int getWorstPlace(){
+        String sqlState = "SELECT max(nr) FROM places WHERE nr > 0 AND loser = " + ps.getPlayer().getId() + ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);

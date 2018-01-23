@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class PlayerStatistic implements Comparable<PlayerStatistic> {
 
     private int bestPlace;
+    private int worstPlace;
     private int wins;
     private int headUps;
     private int podiums;
@@ -23,6 +24,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     private String value1, value2, value3;
 
     public final static String stBestPlace = "Beste Platzierung";
+    public final static String stWorstPlace = "Schlechteste Platzierung";
     public final static String stWins = "Siege";
     public final static String stHeadUps = "Heads-Ups";
     public final static String stPodiums = "Podiumsplätze";
@@ -44,6 +46,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
 
     public int getSumOfPlaces(){
         return sumOfPlaces;
+    }
+
+    public int getWorstPlace() {
+        return worstPlace;
     }
 
     public int getBestPlace() {
@@ -108,6 +114,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         this.minuits = minuits;
     }
 
+    public void setWorstPlace(int worstPlace) {
+        this.worstPlace = worstPlace;
+    }
+
     public void setBeatenPlayers(int beatenPlayers) {
         this.beatenPlayers = beatenPlayers;
     }
@@ -141,6 +151,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     public ArrayList<String> getStatisticList(){
         ArrayList<String> statisticList = new ArrayList<>();
         statisticList.add(stBestPlace + ": " + bestPlace);
+        statisticList.add(stWorstPlace + ": " + worstPlace);
         statisticList.add(stWins + ": " + wins);
         statisticList.add(stHeadUps + ": " + headUps);
         statisticList.add(stPodiums + ": " + podiums);
@@ -185,6 +196,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
                 return getHeadUps();
             case stPodiums:
                 return getPodiums();
+            case stWorstPlace:
+                return getWorstPlace();
             default:
                 return -1;
         }
@@ -210,6 +223,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     public void fillStrings(){
         strings.clear();
         strings.add(stBestPlace);
+        strings.add(stWorstPlace);
         strings.add(stWins);
         strings.add(stHeadUps);
         strings.add(stPodiums);
@@ -240,7 +254,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
             Integer a = this.getValue(value1);
             Integer b = another.getValue(value1);
             if (a.intValue() != b.intValue()) {
-                if (value1.equals(stBestPlace) || value1.equals(stSumOfPlaces)) {
+                if (value1.equals(stBestPlace) || value1.equals(stSumOfPlaces) || value1.equals(stWorstPlace)) {
                     return a.compareTo(b);
                 } else {
                     return b.compareTo(a);
@@ -259,7 +273,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
             Integer a = this.getValue(value2);
             Integer b = another.getValue(value2);
             if (a.intValue() != b.intValue()) {
-                if (value2.equals(stBestPlace) || value2.equals(stSumOfPlaces)) {
+                if (value2.equals(stBestPlace) || value2.equals(stSumOfPlaces) || value2.equals(stWorstPlace)) {
                     return a.compareTo(b);
                 } else {
                     return b.compareTo(a);
@@ -278,7 +292,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         else {
             Integer a = this.getValue(value3);
             Integer b = another.getValue(value3);
-            if (value3.equals(stBestPlace) || value3.equals(stSumOfPlaces)) {
+            if (value3.equals(stBestPlace) || value3.equals(stSumOfPlaces) || value3.equals(stWorstPlace)) {
                 return a.compareTo(b);
             } else {
                 return b.compareTo(a);

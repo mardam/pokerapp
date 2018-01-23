@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +20,9 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import de.markusdamm.pokerapp.data.Gender;
 import de.markusdamm.pokerapp.data.Player;
@@ -132,6 +135,10 @@ public class SinglePlayerOverview extends ActionBarActivity {
         ps.setParticipators(getParticipators());
         ps.setSumOfPlaces(getGetSumOfPlaces());
         ps.setMultikills(getMultikills());
+        ps.setMostDeaths(getMostDeaths());
+        ps.setMostKills(getMostKills());
+
+
 
         database.close();
     }
@@ -242,6 +249,52 @@ public class SinglePlayerOverview extends ActionBarActivity {
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
+    }
+
+    public Pair<Integer, List<String>> getMostKills() {
+        String sqlState = "with y as (\n" +
+                "SELECT count(*) as value, pl.name as player\n" +
+                "FROM places p, players pl\n" +
+                "WHERE p.nr != 1 AND p.evening != 1 AND pl.id = p.loser and p.winner = " + ps.getPlayer().getId() + "\n" +
+                "GROUP BY winner, loser)\n" +
+                "\n" +
+                "SELECT * FROM y\n" +
+                "WHERE value = (SELECT max(value) FROM y)";
+        Cursor cursor = database.rawQuery(sqlState, null);
+
+        List<String> ret = new ArrayList<>();
+        int val = -1;
+
+        while(cursor.moveToNext()){
+            String entry = cursor.getString(cursor.getColumnIndex("player"));
+            val = cursor.getInt(cursor.getColumnIndex("value"));
+            ret.add(entry);
+        }
+        cursor.close();
+        return new Pair<>(val, ret);
+    }
+
+    public Pair<Integer, List<String>> getMostDeaths() {
+        String sqlState = "with y as (\n" +
+                "SELECT count(*) as value, pl.name as player\n" +
+                "FROM places p, players pl\n" +
+                "WHERE p.nr != 1 AND p.evening != 1 AND pl.id = p.winner and p.loser = " + ps.getPlayer().getId() + "\n" +
+                "GROUP BY winner, loser)\n" +
+                "\n" +
+                "SELECT * FROM y\n" +
+                "WHERE value = (SELECT max(value) FROM y)";
+        Cursor cursor = database.rawQuery(sqlState, null);
+
+        List<String> ret = new ArrayList<>();
+        int val = -1;
+
+        while(cursor.moveToNext()){
+            String entry = cursor.getString(cursor.getColumnIndex("player"));
+            val = cursor.getInt(cursor.getColumnIndex("value"));
+            ret.add(entry);
+        }
+        cursor.close();
+        return new Pair<>(val, ret);
     }
 
     public void saveChanges(View view){

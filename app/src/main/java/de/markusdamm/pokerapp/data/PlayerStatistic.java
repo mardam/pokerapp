@@ -1,5 +1,7 @@
 package de.markusdamm.pokerapp.data;
 
+import android.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +22,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     private int participators;
     private int sumOfPlaces;
     private int multikills;
+    private int mostKills;
+    private List<String> killed = new ArrayList<>();
+    private int mostDeaths;
+    private List<String> killers = new ArrayList<>();
     private Player player;
     private ArrayList<String> strings;
 
@@ -39,6 +45,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     public final static String stAveragePlace = "Durchschnittliche Platzierung";
     public final static String stMultikills = "Multikills";
     public final static String stLastPlaces = "Letzte Plätze";
+    public final static String stMostKills = "Häufigste getötete Gegner";
+    public final static String stMostDeaths = "Am häufigsten getötet von";
 
 
     public PlayerStatistic(Player player){
@@ -100,6 +108,38 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         return lastPlaces;
     }
 
+    public int getMostKills() {
+        return mostKills;
+    }
+
+    public int getMostDeaths() {
+        return mostDeaths;
+    }
+
+    public String getMostKilled() {
+        String ret = "";
+        for (String kill: killed) {
+            if (ret == "") {
+                ret = kill;
+            } else {
+                ret = ret + ", " + kill;
+            }
+        }
+        return ret;
+    }
+
+    public String getMostKillers() {
+        String ret = "";
+        for (String kill: killers) {
+            if (ret == "") {
+                ret = kill;
+            } else {
+                ret = ret + ", " + kill;
+            }
+        }
+        return ret;
+    }
+
 
     public void setSumOfPlaces(int sumOfPlaces){
         this.sumOfPlaces = sumOfPlaces;
@@ -150,12 +190,38 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     }
 
 
+    public void setMostKills(Pair<Integer, List<String>> value) {
+        this.mostKills = value.first;
+        this.killers = value.second;
+    }
+
+    public void setMostDeaths(Pair<Integer, List<String>> value) {
+        this.mostDeaths = value.first;
+        this.killed = value.second;
+    }
+
+
     public void setValues(String value1, String value2, String value3){
         this.value1 = value1;
         this.value2 = value2;
         this.value3 = value3;
     }
 
+    private String buildMostKillers() {
+        if (mostKills == -1) {
+            return stMostKills + ": niemand";
+        }
+
+        return stMostKills + ": " + mostKills + " Mal: " + getMostKillers();
+    }
+
+    private String buildMostKilled() {
+        if (mostDeaths == -1) {
+            return stMostDeaths + ": niemanden";
+        }
+
+        return stMostDeaths + ": " + mostDeaths + " Mal von " + getMostKilled();
+    }
 
 
     public ArrayList<String> getStatisticList(){
@@ -174,8 +240,8 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         statisticList.add(stWorsePlayer + ": " + Integer.toString(participators - sumOfPlaces));
         statisticList.add(stAveragePlace + ": " + ((double)sumOfPlaces) / participations);
         statisticList.add(stMultikills + ": " + multikills);
-
-
+        statisticList.add(buildMostKillers());
+        statisticList.add(buildMostKilled());
 
         return statisticList;
     }
@@ -211,6 +277,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
                 return getWorstPlace();
             case stLastPlaces:
                 return getLastPlaces();
+            case stMostKills:
+                return getMostKills();
+            case stMostDeaths:
+                return getMostDeaths();
             default:
                 return -1;
         }

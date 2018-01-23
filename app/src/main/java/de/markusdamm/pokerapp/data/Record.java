@@ -54,6 +54,8 @@ public class Record {
         ret.add("Multikills");
         ret.add("Meiste Teilnehmer");
         ret.add("Sieger");
+        ret.add("Kills");
+        ret.add("Tode");
 
         return(ret);
     }
@@ -88,6 +90,12 @@ public class Record {
         }
         if (kind == "Sieger") {
             return getWinners();
+        }
+        if (kind == "Kills") {
+            return getKills();
+        }
+        if (kind == "Tode") {
+            return getDeaths();
         }
         throw new IllegalArgumentException("Illegal kind in getDBRequest for Record" + kind);
     }
@@ -176,6 +184,22 @@ public class Record {
                 "order by e.date ASC";
     }
 
+    private static String getKills() {
+        return "SELECT count(*) as value, p1.name as player, p2.name as name\n" +
+                "FROM places p, players p1, players p2\n" +
+                "WHERE p.nr != 1 AND p.evening != 1 AND p1.id = p.winner and p2.id = p.loser\n" +
+                "GROUP BY winner, loser\n" +
+                "ORDER BY value DESC, player";
+    }
+
+    private static String getDeaths() {
+        return "SELECT count(*) as value, p1.name as name, p2.name as player\n" +
+                "FROM places p, players p1, players p2\n" +
+                "WHERE p.nr != 1 AND p.evening != 1 AND p1.id = p.winner and p2.id = p.loser\n" +
+                "GROUP BY winner, loser\n" +
+                "ORDER BY value DESC, player";
+    }
+
     public static String getType(String kind) {
         if (kind == "Längster Abend") {
             return "minuts";
@@ -205,6 +229,12 @@ public class Record {
             return "minuts+player";
         }
         if (kind == "Sieger") {
+            return "number+player";
+        }
+        if (kind == "Kills") {
+            return "number+player";
+        }
+        if (kind == "Tode") {
             return "number+player";
         }
         throw new IllegalArgumentException("Illegal kind for type in Records");

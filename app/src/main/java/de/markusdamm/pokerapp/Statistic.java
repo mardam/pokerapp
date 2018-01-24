@@ -309,7 +309,10 @@ public class Statistic extends ActionBarActivity {
 
     public double getNormalizedMean(Player pl) {
         String sqlState = "SELECT avg(1.0 * nr/max_val) as normalized from places p1\n" +
-                "JOIN (SELECT max(nr) as max_val, evening FROM places GROUP BY evening) AS p2 \n" +
+                "INNER JOIN (SELECT max(p.nr) as max_val, p.evening FROM places p JOIN evenings e ON\n" +
+                "e.id = p.evening " +
+                getLocationStringForSqlQuery() +
+                " GROUP BY evening) AS p2\n" +
                 "ON p1.evening = p2.evening AND p1.loser = " + pl.getId();
 
         Cursor cursor = database.rawQuery(sqlState, null);

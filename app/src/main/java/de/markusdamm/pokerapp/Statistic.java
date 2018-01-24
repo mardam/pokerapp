@@ -282,8 +282,9 @@ public class Statistic extends ActionBarActivity {
     }
 
     public double getAverage(Player pl) {
-        String sqlState = "SELECT avg(places.nr) FROM places\n" +
-                "WHERE loser = " + pl.getId();
+        String sqlState = "SELECT avg(p.nr) FROM places p\n" +
+                "JOIN evenings e ON p.loser = " + pl.getId() + " AND e.id = p.evening " +
+                getLocationStringForSqlQuery();
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getDouble(0);

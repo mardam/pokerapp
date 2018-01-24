@@ -50,31 +50,21 @@ public class ArrayAdapterStatistic extends ArrayAdapter<PlayerStatistic> {
 
         name.setText(namenText);
 
+        String ageText = formatNumberForAgeText(players.get(position).getValue(choice1)) +
+                " | " +
+                formatNumberForAgeText(players.get(position).getValue(choice2)) +
+                " | " +
+                formatNumberForAgeText(players.get(position).getValue(choice3));
 
-        String ageText;
-
-        if (choice1.equals(PlayerStatistic.stAveragePlace)){
-            ageText = f.format(((double)ps.getSumOfPlaces())/ps.getParticipations()) + " | ";
-        }
-        else{
-            ageText = players.get(position).getValue(choice1) + " | ";
-        }
-
-        if (choice2.equals(PlayerStatistic.stAveragePlace)){
-            ageText = ageText + f.format(((double)ps.getSumOfPlaces())/ps.getParticipations()) + " | ";
-        }
-        else{
-            ageText = ageText + players.get(position).getValue(choice2) + " | ";
-        }
-        if (choice3.equals(PlayerStatistic.stAveragePlace)){
-            ageText = ageText + f.format(((double)ps.getSumOfPlaces())/ps.getParticipations());
-        }
-        else{
-            ageText = ageText + players.get(position).getValue(choice3);
-        }
         age.setText(ageText);
-        //age.setText(players.get(position).getMinuits() + " | " + players.get(position).formatTimeToString());
-
         return row;
+    }
+
+    private String formatNumberForAgeText(Number value) {
+        if (value instanceof Integer) {
+            return Integer.toString((Integer) value);
+        } else {
+            return f.format(value.doubleValue());
+        }
     }
 }

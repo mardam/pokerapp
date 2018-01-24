@@ -119,6 +119,7 @@ public class Statistic extends ActionBarActivity {
             ps.setParticipators(getParticipators(pl));
             ps.setSumOfPlaces(getGetSumOfPlaces(pl));
             ps.setMultikills(getMultikills(pl));
+            ps.setAverage(0.3343423434);
             pStatistics.add(ps);
 
 

@@ -292,15 +292,18 @@ public class Statistic extends ActionBarActivity {
 
     public double getMedian(Player pl) {
         String sqlState = "with curr_table AS (\n" +
-                "SELECT nr FROM places WHERE loser = " + pl.getId() + ")\n" +
+                "SELECT nr FROM places p\n" +
+                "INNER JOIN evenings e ON p.evening = e.id " +
+                getLocationStringForSqlQuery() +
+                " AND p.loser = " + pl.getId() + ")\n" +
                 "\n" +
                 "SELECT avg(nr)\n" +
                 "FROM (SELECT nr\n" +
-                "      FROM curr_table\n" +
-                "      ORDER BY nr\n" +
-                "      LIMIT 2 - (SELECT COUNT(*) FROM curr_table) % 2    -- odd 1, even 2\n" +
-                "      OFFSET (SELECT (COUNT(*) - 1) / 2\n" +
-                "              FROM curr_table))";
+                "FROM curr_table\n" +
+                "ORDER BY nr\n" +
+                "LIMIT 2 - (SELECT COUNT(*) FROM curr_table) % 2    -- odd 1, even 2\\n\" +\n" +
+                "OFFSET (SELECT (COUNT(*) - 1) / 2\n" +
+                "FROM curr_table))";
 
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();

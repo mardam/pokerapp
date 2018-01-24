@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 import de.markusdamm.pokerapp.R;
-import de.markusdamm.pokerapp.data.Player;
 import de.markusdamm.pokerapp.data.PlayerStatistic;
 
 /**

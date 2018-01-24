@@ -289,40 +289,56 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     }
 
 
-    public int getValue(String value){
+
+    public <T extends Number> T getValue(String value){
         switch (value){
             case stBestPlace:
-                return getBestPlace();
+                return (T) Integer.valueOf(getBestPlace());
             case stWins:
-                return getWins();
+                return (T) Integer.valueOf(getWins());
             case stMinuits:
-                return getMinuits();
+                return (T) Integer.valueOf(getMinuits());
             case stBeatenPlayers:
-                return getBeatenPlayers();
+                return (T) Integer.valueOf(getBeatenPlayers());
             case stNumberOfOponents:
-                return getParticipators();
+                return (T) Integer.valueOf(getParticipators());
             case stSumOfPlaces:
-                return getSumOfPlaces();
+                return (T) Integer.valueOf(getSumOfPlaces());
             case stWorsePlayer:
-                return getParticipators() - getSumOfPlaces();
+                return (T) Integer.valueOf(getParticipators() - getSumOfPlaces());
             case stParticipations:
-                return getParticipations();
+                return (T) Integer.valueOf(getParticipations());
             case stAveragePlace:
-                return sumOfPlaces / participations;
+                return (T) Integer.valueOf(sumOfPlaces / participations);
             case stMultikills:
-                return getMultikills();
+                return (T) Integer.valueOf(getMultikills());
             case stHeadUps:
-                return getHeadUps();
+                return (T) Integer.valueOf(getHeadUps());
             case stPodiums:
-                return getPodiums();
+                return (T) Integer.valueOf(getPodiums());
             case stWorstPlace:
-                return getWorstPlace();
+                return (T) Integer.valueOf(getWorstPlace());
             case stLastPlaces:
-                return getLastPlaces();
+                return (T) Integer.valueOf(getLastPlaces());
             case stMostKills:
-                return getMostKills();
+                return (T) Integer.valueOf(getMostKills());
             case stMostDeaths:
-                return getMostDeaths();
+                return (T) Integer.valueOf(getMostDeaths());
+            default:
+                return (T) Integer.valueOf(-1);
+        }
+    }
+
+    public double getFloatingValue(String value) {
+        switch (value){
+            case stSD:
+                return getSd();
+            case stMedian:
+                return getMedian();
+            case stAveragePlace:
+                return getAverage();
+            case stNormalizedMean:
+                return normalizedMean;
             default:
                 return -1;
         }
@@ -373,67 +389,50 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         ret.add(stSumOfPlaces);
         ret.add(stWorstPlace);
         ret.add(stLastPlaces);
+        ret.add(stSD);
+        ret.add(stMedian);
+        ret.add(stAveragePlace);
+        ret.add(stNormalizedMean);
 
         return ret;
     }
 
+    public List<String> floatingValues() {
+        List<String> ret = new ArrayList<>();
+        ret.add(stSD);
+        ret.add(stMedian);
+        ret.add(stAveragePlace);
+        ret.add(stNormalizedMean);
+        return ret;
+    }
+
+    private int compareNumbers(Double x, Double y, String value) {
+        if (inverseToSort().contains(value)) {
+            return x.compareTo(y);
+        } else {
+            return y.compareTo(x);
+        }
+    }
+
     @Override
     public int compareTo(PlayerStatistic another) {
-        if (value1.equals(stAveragePlace)){
-            Double a = ((double)this.getSumOfPlaces())/this.getParticipations();
-            Double b = ((double)another.getSumOfPlaces())/another.getParticipations();
-            if (a.floatValue() != b.floatValue()){
-                return a.compareTo(b);
-            }
-        }
-        else {
-            Integer a = this.getValue(value1);
-            Integer b = another.getValue(value1);
-            if (a.intValue() != b.intValue()) {
-                if (inverseToSort().contains(value1)) {
-                    return a.compareTo(b);
-                } else {
-                    return b.compareTo(a);
-                }
-            }
+        Double x = this.getValue(value1).doubleValue();
+        Double y = another.getValue(value1).doubleValue();
+
+        if (x.doubleValue() != y.doubleValue()) {
+            return compareNumbers(x, y, value1);
         }
 
-        if (value2.equals(stAveragePlace)){
-            Double a = ((double)this.getSumOfPlaces())/this.getParticipations();
-            Double b = ((double)another.getSumOfPlaces())/another.getParticipations();
-            if (a.floatValue() != b.floatValue()){
-                return a.compareTo(b);
-            }
-        }
-        else {
-            Integer a = this.getValue(value2);
-            Integer b = another.getValue(value2);
-            if (a.intValue() != b.intValue()) {
-                if (value2.equals(stBestPlace) || value2.equals(stSumOfPlaces) || value2.equals(stWorstPlace)) {
-                    return a.compareTo(b);
-                } else {
-                    return b.compareTo(a);
-                }
-            }
+        x = this.getValue(value2).doubleValue();
+        y = another.getValue(value2).doubleValue();
+
+        if (x.doubleValue() != y.doubleValue()) {
+            return compareNumbers(x, y, value2);
         }
 
+        x = this.getValue(value3).doubleValue();
+        y = another.getValue(value3).doubleValue();
 
-        if (value3.equals(stAveragePlace)){
-            Double a = ((double)this.getSumOfPlaces())/this.getParticipations();
-            Double b = ((double)another.getSumOfPlaces())/another.getParticipations();
-            if (a.floatValue() != b.floatValue()){
-                return a.compareTo(b);
-            }
-        }
-        else {
-            Integer a = this.getValue(value3);
-            Integer b = another.getValue(value3);
-            if (value3.equals(stBestPlace) || value3.equals(stSumOfPlaces) || value3.equals(stWorstPlace)) {
-                return a.compareTo(b);
-            } else {
-                return b.compareTo(a);
-            }
-        }
-        return 0;
+        return compareNumbers(x, y, value3);
     }
 }

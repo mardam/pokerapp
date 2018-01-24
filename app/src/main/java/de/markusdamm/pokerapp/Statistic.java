@@ -119,7 +119,10 @@ public class Statistic extends ActionBarActivity {
             ps.setParticipators(getParticipators(pl));
             ps.setSumOfPlaces(getGetSumOfPlaces(pl));
             ps.setMultikills(getMultikills(pl));
-            ps.setAverage(0.3343423434);
+            ps.setAverage(getAverage(pl));
+            ps.setMedian(getMedian(pl));
+            ps.setSd(getSD(pl));
+            ps.setNormalizedMean(getNormalizedMean(pl));
             pStatistics.add(ps);
 
 
@@ -265,6 +268,53 @@ public class Statistic extends ActionBarActivity {
         cursor.moveToLast();
         return cursor.getInt(0);
     }
+
+    public double getSD(Player pl) {
+        String sqlState = "with mean as (\n" +
+                "SELECT avg(nr) AS Mean FROM places WHERE loser = " + pl.getId() + ")\n" +
+                "SELECT avg((nr-mean.mean)*(nr-mean.mean)) as sd from places, mean\n" +
+                "WHERE loser = " + pl.getId();
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return Math.sqrt(cursor.getDouble(0));
+    }
+
+    public double getAverage(Player pl) {
+        String sqlState = "SELECT avg(places.nr) FROM places\n" +
+                "WHERE loser = " + pl.getId();
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
+    public double getMedian(Player pl) {
+        String sqlState = "with curr_table AS (\n" +
+                "SELECT nr FROM places WHERE loser = " + pl.getId() + ")\n" +
+                "\n" +
+                "SELECT avg(nr)\n" +
+                "FROM (SELECT nr\n" +
+                "      FROM curr_table\n" +
+                "      ORDER BY nr\n" +
+                "      LIMIT 2 - (SELECT COUNT(*) FROM curr_table) % 2    -- odd 1, even 2\n" +
+                "      OFFSET (SELECT (COUNT(*) - 1) / 2\n" +
+                "              FROM curr_table))";
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
+    public double getNormalizedMean(Player pl) {
+        String sqlState = "SELECT avg(1.0 * nr/max_val) as normalized from places p1\n" +
+                "JOIN (SELECT max(nr) as max_val, evening FROM places GROUP BY evening) AS p2 \n" +
+                "ON p1.evening = p2.evening AND p1.loser = " + pl.getId();
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
 
     public void fillList(){
         ListView lvStatistics = (ListView)findViewById(R.id.lvStatistics);

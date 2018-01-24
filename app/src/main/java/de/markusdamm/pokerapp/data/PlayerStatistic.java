@@ -309,7 +309,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
             case stParticipations:
                 return (T) Integer.valueOf(getParticipations());
             case stAveragePlace:
-                return (T) Double.valueOf(average);
+                return (T) Double.valueOf(getAverage());
             case stMultikills:
                 return (T) Integer.valueOf(getMultikills());
             case stHeadUps:
@@ -324,6 +324,12 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
                 return (T) Integer.valueOf(getMostKills());
             case stMostDeaths:
                 return (T) Integer.valueOf(getMostDeaths());
+            case stMedian:
+                return (T) Double.valueOf(getMedian());
+            case stSD:
+                return (T) Double.valueOf(getSd());
+            case stNormalizedMean:
+                return (T) Double.valueOf(getNormalizedMean());
             default:
                 return (T) Integer.valueOf(-1);
         }
@@ -361,6 +367,9 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         strings.add(stSumOfPlaces);
         strings.add(stWorsePlayer);
         strings.add(stAveragePlace);
+        strings.add(stMedian);
+        strings.add(stSD);
+        strings.add(stNormalizedMean);
         strings.add(stMultikills);
     }
 

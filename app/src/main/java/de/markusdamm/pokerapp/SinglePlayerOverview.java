@@ -137,7 +137,9 @@ public class SinglePlayerOverview extends ActionBarActivity {
         ps.setMultikills(getMultikills());
         ps.setMostDeaths(getMostDeaths());
         ps.setMostKills(getMostKills());
-
+        ps.setSd(getSD());
+        ps.setMedian(getMedian());
+        ps.setNormalizedMean(getNormalizedMean());
 
 
         database.close();
@@ -295,6 +297,44 @@ public class SinglePlayerOverview extends ActionBarActivity {
         }
         cursor.close();
         return new Pair<>(val, ret);
+    }
+
+    public double getSD() {
+        String sqlState = "with mean as (\n" +
+                "SELECT avg(nr) AS Mean FROM places WHERE loser = " + ps.getPlayer().getId() + ")\n" +
+                "SELECT avg((nr-mean.mean)*(nr-mean.mean)) as sd from places, mean\n" +
+                "WHERE loser = " + ps.getPlayer().getId();
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return Math.sqrt(cursor.getDouble(0));
+    }
+
+    public double getMedian() {
+        String sqlState = "with curr_table AS (\n" +
+                "SELECT nr FROM places WHERE loser = " + ps.getPlayer().getId() + ")\n" +
+                "\n" +
+                "SELECT avg(nr)\n" +
+                "FROM (SELECT nr\n" +
+                "      FROM curr_table\n" +
+                "      ORDER BY nr\n" +
+                "      LIMIT 2 - (SELECT COUNT(*) FROM curr_table) % 2    -- odd 1, even 2\n" +
+                "      OFFSET (SELECT (COUNT(*) - 1) / 2\n" +
+                "              FROM curr_table))";
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
+    public double getNormalizedMean() {
+        String sqlState = "SELECT avg(1.0 * nr/max_val) as normalized from places p1\n" +
+                "JOIN (SELECT max(nr) as max_val, evening FROM places GROUP BY evening) AS p2 \n" +
+                "ON p1.evening = p2.evening AND p1.loser = " + ps.getPlayer().getId();
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
     }
 
     public void saveChanges(View view){

@@ -23,6 +23,10 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     private int sumOfPlaces;
     private int multikills;
     private int mostKills;
+    private double median;
+    private double sd;
+    private double normalizedMean;
+    private double average;
     private List<String> killed = new ArrayList<>();
     private int mostDeaths;
     private List<String> killers = new ArrayList<>();
@@ -47,6 +51,9 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
     public final static String stLastPlaces = "Letzte Plätze";
     public final static String stMostKills = "Häufigste getötete Gegner";
     public final static String stMostDeaths = "Am häufigsten getötet von";
+    public final static String stSD = "Standardabweichung";
+    public final static String stMedian = "Median";
+    public final static String stNormalizedMean = "Normalisierter Durchschnitt über Teilnehmerzahl";
 
 
     public PlayerStatistic(Player player){
@@ -140,6 +147,22 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         return ret;
     }
 
+    public double getMedian() {
+        return median;
+    }
+
+    public double getSd() {
+        return sd;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public double getNormalizedMean() {
+        return normalizedMean;
+    }
+
 
     public void setSumOfPlaces(int sumOfPlaces){
         this.sumOfPlaces = sumOfPlaces;
@@ -223,6 +246,22 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         return stMostDeaths + ": " + mostDeaths + " Mal von " + getMostKilled();
     }
 
+    public void setMedian(double median) {
+        this.median = median;
+    }
+
+    public void setSd(double sd) {
+        this.sd = sd;
+    }
+
+    public void setNormalizedMean(double normalizedMean) {
+        this.normalizedMean = normalizedMean;
+    }
+
+    public void setAverage(double average) {
+        this.average = average;
+    }
+
 
     public ArrayList<String> getStatisticList(){
         ArrayList<String> statisticList = new ArrayList<>();
@@ -239,6 +278,9 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         statisticList.add(stSumOfPlaces + ": " + sumOfPlaces);
         statisticList.add(stWorsePlayer + ": " + Integer.toString(participators - sumOfPlaces));
         statisticList.add(stAveragePlace + ": " + ((double)sumOfPlaces) / participations);
+        statisticList.add(stNormalizedMean + ": " + normalizedMean);
+        statisticList.add(stMedian + ": " + median);
+        statisticList.add(stSD + ": " + sd);
         statisticList.add(stMultikills + ": " + multikills);
         statisticList.add(buildMostKillers());
         statisticList.add(buildMostKilled());

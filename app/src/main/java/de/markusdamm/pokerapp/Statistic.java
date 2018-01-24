@@ -271,9 +271,10 @@ public class Statistic extends ActionBarActivity {
 
     public double getSD(Player pl) {
         String sqlState = "with mean as (\n" +
-                "SELECT avg(nr) AS Mean FROM places WHERE loser = " + pl.getId() + ")\n" +
-                "SELECT avg((nr-mean.mean)*(nr-mean.mean)) as sd from places, mean\n" +
-                "WHERE loser = " + pl.getId();
+                "SELECT avg(nr) AS Mean FROM places p JOIN evenings e ON e.id = p.evening " + getLocationStringForSqlQuery() + " WHERE p.loser = " + pl.getId() + ")\n" +
+                "SELECT avg((p1.nr-mean.mean)*(p1.nr-mean.mean)) as sd from places p1, mean\n" +
+                "JOIN evenings e ON e.id = p1.evening " + getLocationStringForSqlQuery() + "\n" +
+                "WHERE p1.loser = " + pl.getId();
 
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();

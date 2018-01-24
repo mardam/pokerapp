@@ -140,6 +140,7 @@ public class SinglePlayerOverview extends ActionBarActivity {
         ps.setSd(getSD());
         ps.setMedian(getMedian());
         ps.setNormalizedMean(getNormalizedMean());
+        ps.setAverage(getAverage());
 
 
         database.close();
@@ -308,6 +309,14 @@ public class SinglePlayerOverview extends ActionBarActivity {
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return Math.sqrt(cursor.getDouble(0));
+    }
+
+    public double getAverage() {
+        String sqlState = "SELECT avg(places.nr) FROM places\n" +
+                "WHERE loser = " + ps.getPlayer().getId();
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
     }
 
     public double getMedian() {

@@ -277,7 +277,7 @@ public class PlayerStatistic implements Comparable<PlayerStatistic> {
         statisticList.add(stNumberOfOponents + ": " + participators);
         statisticList.add(stSumOfPlaces + ": " + sumOfPlaces);
         statisticList.add(stWorsePlayer + ": " + Integer.toString(participators - sumOfPlaces));
-        statisticList.add(stAveragePlace + ": " + ((double)sumOfPlaces) / participations);
+        statisticList.add(stAveragePlace + ": " + average);
         statisticList.add(stNormalizedMean + ": " + normalizedMean);
         statisticList.add(stMedian + ": " + median);
         statisticList.add(stSD + ": " + sd);

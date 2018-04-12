@@ -56,6 +56,7 @@ public class Record {
         ret.add("Sieger");
         ret.add("Kills");
         ret.add("Tode");
+        ret.add("Längste Killstreak");
 
         return(ret);
     }
@@ -96,6 +97,9 @@ public class Record {
         }
         if (kind == "Tode") {
             return getDeaths();
+        }
+        if (kind == "Längste Killstreak") {
+            return getLongestStreak();
         }
         throw new IllegalArgumentException("Illegal kind in getDBRequest for Record" + kind);
     }
@@ -200,6 +204,30 @@ public class Record {
                 "ORDER BY value DESC, player";
     }
 
+    private static String getLongestStreak() {
+        return "with y as (SELECT p.nr as position, e.name as evening, pl.name as player, p.time as time FROM players pl, places p, evenings e\n" +
+                "where pl.id = p.winner AND e.id = p.evening),\n" +
+                "\n" +
+                "z as (SELECT player, (select count(*) from y as y2 where y.time > y2.time OR (y.position < y2.position AND y.time = y2.time)) as cnt FROM y\n" +
+                "ORDER BY cnt ASC)\n" +
+                "\n" +
+                "SELECT player as name, max(consecutives) as value\n" +
+                "FROM (\n" +
+                "    SELECT t1.player, t1.cnt, COUNT(*) AS consecutives -- Block 2\n" +
+                "    FROM z t1 INNER JOIN z t2 ON t1.player = t2.player\n" +
+                "    WHERE t1.cnt <= t2.cnt\n" +
+                "      AND NOT EXISTS (\n" +
+                "        SELECT *  -- Block 3\n" +
+                "        FROM z t3 \n" +
+                "        WHERE t3.cnt > t1.cnt\n" +
+                "          AND t3.cnt < t2.cnt\n" +
+                "          AND t3.player  != t1.player\n" +
+                "    )    \n" +
+                "    GROUP BY t1.player, t1.cnt\n" +
+                ") GROUP BY player " +
+                "ORDER BY value DESC;";
+    }
+
     public static String getType(String kind) {
         if (kind == "Längster Abend") {
             return "minuts";
@@ -236,6 +264,9 @@ public class Record {
         }
         if (kind == "Tode") {
             return "number+player";
+        }
+        if (kind == "Längste Killstreak") {
+            return "number";
         }
         throw new IllegalArgumentException("Illegal kind for type in Records");
     }

@@ -208,19 +208,24 @@ public class Record {
         return "with v as (SELECT p.nr as position, e.name as evening, pl.name as player, p.time as time FROM players pl, places p, evenings e\n" +
                 "where pl.id = p.winner AND e.id = p.evening),\n" +
                 "\n" +
-                "w as (SELECT player as name, (select count(*) from v as v2 where v.time > v2.time OR (v.position < v2.position AND v.time = v2.time)) as nummer FROM v\n" +
+                "w as (SELECT evening, player as name, (select count(*) from v as v2 where v.time > v2.time OR (v.position < v2.position AND v.time = v2.time)) as nummer FROM v\n" +
                 "ORDER BY nummer ASC),\n" +
                 "\n" +
-                "x as (select p1.nummer as Nummer1, p2.nummer as Nummer2, p1.name as name from w p1, w p2 where p2.name == p1.name and p1.nummer < p2.nummer),\n" +
-                "y as (select t1.nummer1, t1.nummer2, t1.name from x as t1, x as t2\n" +
+                "x as (select p1.evening, p1.nummer as Nummer1, p2.nummer as Nummer2, p1.name as name from w p1, w p2 where p2.name == p1.name and p1.nummer <= p2.nummer and p2.nummer - p1.nummer < 15),\n" +
+                "\n" +
+                "y as (select distinct t1.evening, t1.nummer1, t1.nummer2, t1.name from x as t1, x as t2\n" +
                 "where (t2.nummer1 > t1.nummer1 and t2.nummer1 < t1.nummer2) and t1.name != t2.name),\n" +
-                "z as (select * from x EXCEPT select * from y),\n" +
-                "a as (select z2.nummer1, z2.nummer2, z2.name from z as z1, z as z2\n" +
+                "\n" +
+                "z1 as (select * from x EXCEPT select * from y),\n" +
+                "\n" +
+                "z as (select * from z1 where nummer1 != nummer2),\n" +
+                "\n" +
+                "a as (select z1.evening, z2.nummer1, z2.nummer2, z2.name from z as z1, z as z2\n" +
                 "where z1.name = z2.name  and (z1.nummer1 != z2.nummer1 or z1.nummer2 != z2.nummer2) \n" +
                 "and ((z2.nummer1 > z1.nummer1 and z2.nummer1 < z1.nummer2)\n" +
                 "or (z2.nummer2 > z1.nummer1 and z2.nummer2 < z1.nummer2)))\n" +
                 "\n" +
-                "SELECT name, nummer2-nummer1 + 1 as value FROM (select * from z EXCEPT select * from a) ORDER BY value DESC";
+                "SELECT evening as name, name as player, nummer2-nummer1 + 1 as value FROM (select * from z EXCEPT select * from a) ORDER BY value DESC";
     }
 
     public static String getType(String kind) {
@@ -261,7 +266,7 @@ public class Record {
             return "number+player";
         }
         if (kind == "Längste Killstreak") {
-            return "number";
+            return "number+player";
         }
         throw new IllegalArgumentException("Illegal kind for type in Records");
     }

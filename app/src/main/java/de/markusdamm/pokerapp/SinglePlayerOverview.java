@@ -231,9 +231,13 @@ public class SinglePlayerOverview extends ActionBarActivity {
 
     public int getNumberOfLastPlaces(){
         String sqlState = "SELECT count(*)\n" +
-                "FROM evenings as e, places as p, players as pl\n" +
-                "WHERE e.id = p.evening and pl.id = p.loser AND e.name != 'Abend 1'\n" +
-                "AND (p.evening, p.nr) IN (SELECT evening, max(nr) FROM places group by evening) AND pl.id = " + ps.getPlayer().getId() + ";";
+                "FROM (\n" +
+                "SELECT p.evening as evening, p.nr as nr\n" +
+                "FROM places p, players pl \n" +
+                "WHERE pl.id = p.loser AND  pl.id = " + ps.getPlayer().getId() +
+                " intersect\n" +
+                "SELECT evening, max(nr) as nr FROM places group by evening\n" +
+                ");";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);

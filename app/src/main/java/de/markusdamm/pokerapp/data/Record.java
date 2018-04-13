@@ -205,27 +205,22 @@ public class Record {
     }
 
     private static String getLongestStreak() {
-        return "with y as (SELECT p.nr as position, e.name as evening, pl.name as player, p.time as time FROM players pl, places p, evenings e\n" +
+        return "with v as (SELECT p.nr as position, e.name as evening, pl.name as player, p.time as time FROM players pl, places p, evenings e\n" +
                 "where pl.id = p.winner AND e.id = p.evening),\n" +
                 "\n" +
-                "z as (SELECT player, (select count(*) from y as y2 where y.time > y2.time OR (y.position < y2.position AND y.time = y2.time)) as cnt FROM y\n" +
-                "ORDER BY cnt ASC)\n" +
+                "w as (SELECT player as name, (select count(*) from v as v2 where v.time > v2.time OR (v.position < v2.position AND v.time = v2.time)) as nummer FROM v\n" +
+                "ORDER BY nummer ASC),\n" +
                 "\n" +
-                "SELECT player as name, max(consecutives) as value\n" +
-                "FROM (\n" +
-                "    SELECT t1.player, t1.cnt, COUNT(*) AS consecutives -- Block 2\n" +
-                "    FROM z t1 INNER JOIN z t2 ON t1.player = t2.player\n" +
-                "    WHERE t1.cnt <= t2.cnt\n" +
-                "      AND NOT EXISTS (\n" +
-                "        SELECT *  -- Block 3\n" +
-                "        FROM z t3 \n" +
-                "        WHERE t3.cnt > t1.cnt\n" +
-                "          AND t3.cnt < t2.cnt\n" +
-                "          AND t3.player  != t1.player\n" +
-                "    )    \n" +
-                "    GROUP BY t1.player, t1.cnt\n" +
-                ") GROUP BY player " +
-                "ORDER BY value DESC;";
+                "x as (select p1.nummer as Nummer1, p2.nummer as Nummer2, p1.name as name from w p1, w p2 where p2.name == p1.name and p1.nummer < p2.nummer),\n" +
+                "y as (select t1.nummer1, t1.nummer2, t1.name from x as t1, x as t2\n" +
+                "where (t2.nummer1 > t1.nummer1 and t2.nummer1 < t1.nummer2) and t1.name != t2.name),\n" +
+                "z as (select * from x EXCEPT select * from y),\n" +
+                "a as (select z2.nummer1, z2.nummer2, z2.name from z as z1, z as z2\n" +
+                "where z1.name = z2.name  and (z1.nummer1 != z2.nummer1 or z1.nummer2 != z2.nummer2) \n" +
+                "and ((z2.nummer1 > z1.nummer1 and z2.nummer1 < z1.nummer2)\n" +
+                "or (z2.nummer2 > z1.nummer1 and z2.nummer2 < z1.nummer2)))\n" +
+                "\n" +
+                "SELECT name, nummer2-nummer1 + 1 as value FROM (select * from z EXCEPT select * from a) ORDER BY value DESC";
     }
 
     public static String getType(String kind) {

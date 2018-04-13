@@ -108,13 +108,21 @@ public class Statistic extends ActionBarActivity {
         for (Player pl: players){
             PlayerStatistic ps = new PlayerStatistic(pl);
             ps.setBestPlace(getBestPlace(pl));
-            ps.setWins(getNumberOfWins(pl));
+            ps.setWorstPlace(getWorstPlace(pl));
+            ps.setWins(getNumberOfTopPositions(pl,1));
+            ps.setHeadUps(getNumberOfTopPositions(pl,2));
+            ps.setPodiums(getNumberOfTopPositions(pl,3));
             ps.setBeatenPlayers(getBeatenPlayers(pl));
             ps.setParticipations(getNumberOfParticipations(pl));
-
+            ps.setLastPlaces(getLastPlaces(pl));
             ps.setMinuits(getMinuits(pl));
             ps.setParticipators(getParticipators(pl));
             ps.setSumOfPlaces(getGetSumOfPlaces(pl));
+            ps.setMultikills(getMultikills(pl));
+            ps.setAverage(getAverage(pl));
+            ps.setMedian(getMedian(pl));
+            ps.setSd(getSD(pl));
+            ps.setNormalizedMean(getNormalizedMean(pl));
             pStatistics.add(ps);
 
 
@@ -150,6 +158,21 @@ public class Statistic extends ActionBarActivity {
         return minuits;
     }
 
+
+    public int getMultikills(Player pl) {
+        String sqlState = "SELECT count(*)\n" +
+                "FROM (\n" +
+                "SELECT pl.name as player, e.name as name, time, count(*) as value, count(DISTINCT p.winner) as winners\n" +
+                "FROM places as p, evenings as e, players as pl\n" +
+                "WHERE p.evening = e.id and e.name != 'Abend 1' and p.nr != 1 and pl.id = p.winner and pl.id = " + pl.getId() + getLocationStringForSqlQuery() + "\n" +
+                "group by time\n" +
+                ") WHERE value > 1 and winners = 1\n" +
+                "ORDER BY value DESC, player";
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
 
     public int getGetSumOfPlaces(Player pl){
         String sqlState = "SELECT sum(p.nr) FROM places p " +
@@ -200,10 +223,10 @@ public class Statistic extends ActionBarActivity {
     }
 
 
-    public int getNumberOfWins(Player pl){
+    public int getNumberOfTopPositions(Player pl, int worstPosition){
         String sqlState = "SELECT count(p.evening) FROM places p " +
                 "INNER JOIN evenings e ON e.id = p.evening " +
-                "WHERE p.nr = 1 AND p.loser = " + pl.getId() +
+                "WHERE p.nr <= " + worstPosition + " AND p.loser = " + pl.getId() +
                 getLocationStringForSqlQuery() +
                 ";";
         Cursor cursor = database.rawQuery(sqlState, null);
@@ -218,11 +241,88 @@ public class Statistic extends ActionBarActivity {
                 "WHERE p.nr > 0 AND p.loser = " + pl.getId() +
                 getLocationStringForSqlQuery() +
                  ";";
-        //Toast.makeText(this, sqlState, Toast.LENGTH_SHORT).show();
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
     }
+
+    public int getWorstPlace(Player pl){
+
+        String sqlState = "SELECT max(p.nr) FROM places p " +
+                "INNER JOIN evenings e ON e.id = p.evening " +
+                "WHERE p.nr > 0 AND p.loser = " + pl.getId() +
+                getLocationStringForSqlQuery() +
+                ";";
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public int getLastPlaces(Player pl) {
+        String sqlState = "SELECT count(*)\n" +
+                "FROM evenings as e, places as p, players as pl\n" +
+                "WHERE e.id = p.evening and pl.id = p.loser AND e.name != 'Abend 1'\n" +
+                "AND (p.evening, p.nr) IN (SELECT evening, max(nr) FROM places group by evening) AND pl.id = " + pl.getId() +
+                getLocationStringForSqlQuery() + ";";
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public double getSD(Player pl) {
+        String sqlState = "with mean as (\n" +
+                "SELECT avg(nr) AS Mean FROM places p JOIN evenings e ON e.id = p.evening " + getLocationStringForSqlQuery() + " WHERE p.loser = " + pl.getId() + ")\n" +
+                "SELECT avg((p1.nr-mean.mean)*(p1.nr-mean.mean)) as sd from places p1, mean\n" +
+                "JOIN evenings e ON e.id = p1.evening " + getLocationStringForSqlQuery() + "\n" +
+                "WHERE p1.loser = " + pl.getId();
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return Math.sqrt(cursor.getDouble(0));
+    }
+
+    public double getAverage(Player pl) {
+        String sqlState = "SELECT avg(p.nr) FROM places p\n" +
+                "JOIN evenings e ON p.loser = " + pl.getId() + " AND e.id = p.evening " +
+                getLocationStringForSqlQuery();
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
+    public double getMedian(Player pl) {
+        String sqlState = "with curr_table AS (\n" +
+                "SELECT nr FROM places p\n" +
+                "INNER JOIN evenings e ON p.evening = e.id " +
+                getLocationStringForSqlQuery() +
+                " AND p.loser = " + pl.getId() + ")\n" +
+                "\n" +
+                "SELECT avg(nr)\n" +
+                "FROM (SELECT nr\n" +
+                "FROM curr_table\n" +
+                "ORDER BY nr\n" +
+                "LIMIT 2 - (SELECT COUNT(*) FROM curr_table) % 2    -- odd 1, even 2\\n\" +\n" +
+                "OFFSET (SELECT (COUNT(*) - 1) / 2\n" +
+                "FROM curr_table))";
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
+    public double getNormalizedMean(Player pl) {
+        String sqlState = "SELECT avg(1.0 * nr/max_val) as normalized from places p1\n" +
+                "INNER JOIN (SELECT max(p.nr) as max_val, p.evening FROM places p JOIN evenings e ON\n" +
+                "e.id = p.evening " +
+                getLocationStringForSqlQuery() +
+                " GROUP BY evening) AS p2\n" +
+                "ON p1.evening = p2.evening AND p1.loser = " + pl.getId();
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
 
     public void fillList(){
         ListView lvStatistics = (ListView)findViewById(R.id.lvStatistics);

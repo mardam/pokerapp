@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,7 +20,9 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import de.markusdamm.pokerapp.data.Gender;
 import de.markusdamm.pokerapp.data.Player;
@@ -121,13 +124,23 @@ public class SinglePlayerOverview extends ActionBarActivity {
     public void fillStatistic(){
         database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
         ps.setBestPlace(getBestPlace());
-        ps.setWins(getNumberOfWins());
+        ps.setWorstPlace(getWorstPlace());
+        ps.setWins(getNumberOfTopPositions(1));
+        ps.setHeadUps(getNumberOfTopPositions(2));
+        ps.setPodiums(getNumberOfTopPositions(3));
         ps.setBeatenPlayers(getBeatenPlayers());
         ps.setParticipations(getNumberOfParticipations());
-
+        ps.setLastPlaces(getNumberOfLastPlaces());
         ps.setMinuits(getMinuits());
         ps.setParticipators(getParticipators());
         ps.setSumOfPlaces(getGetSumOfPlaces());
+        ps.setMultikills(getMultikills());
+        ps.setMostDeaths(getMostDeaths());
+        ps.setMostKills(getMostKills());
+        ps.setSd(getSD());
+        ps.setMedian(getMedian());
+        ps.setNormalizedMean(getNormalizedMean());
+        ps.setAverage(getAverage());
 
 
         database.close();
@@ -195,8 +208,8 @@ public class SinglePlayerOverview extends ActionBarActivity {
     }
 
 
-    public int getNumberOfWins(){
-        String sqlState = "SELECT count(evening) FROM places WHERE nr = 1 AND loser = " + ps.getPlayer().getId() + ";";
+    public int getNumberOfTopPositions(int worstPosition){
+        String sqlState = "SELECT count(evening) FROM places WHERE nr <= " + worstPosition + " AND loser = " + ps.getPlayer().getId() + ";";
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
@@ -207,6 +220,130 @@ public class SinglePlayerOverview extends ActionBarActivity {
         Cursor cursor = database.rawQuery(sqlState, null);
         cursor.moveToLast();
         return cursor.getInt(0);
+    }
+
+    public int getWorstPlace(){
+        String sqlState = "SELECT max(nr) FROM places WHERE nr > 0 AND loser = " + ps.getPlayer().getId() + ";";
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public int getNumberOfLastPlaces(){
+        String sqlState = "SELECT count(*)\n" +
+                "FROM evenings as e, places as p, players as pl\n" +
+                "WHERE e.id = p.evening and pl.id = p.loser AND e.name != 'Abend 1'\n" +
+                "AND (p.evening, p.nr) IN (SELECT evening, max(nr) FROM places group by evening) AND pl.id = " + ps.getPlayer().getId() + ";";
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public int getMultikills() {
+        String sqlState = "SELECT count(*)\n" +
+                "FROM (\n" +
+                "SELECT pl.name as player, e.name as name, time, count(*) as value, count(DISTINCT p.winner) as winners\n" +
+                "FROM places as p, evenings as e, players as pl\n" +
+                "WHERE p.evening = e.id and e.name != 'Abend 1' and p.nr != 1 and pl.id = p.winner and pl.id = " + ps.getPlayer().getId() + "\n" +
+                "group by time\n" +
+                ") WHERE value > 1 and winners = 1\n" +
+                "ORDER BY value DESC, player";
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getInt(0);
+    }
+
+    public Pair<Integer, List<String>> getMostKills() {
+        String sqlState = "with y as (\n" +
+                "SELECT count(*) as value, pl.name as player\n" +
+                "FROM places p, players pl\n" +
+                "WHERE p.nr != 1 AND p.evening != 1 AND pl.id = p.loser and p.winner = " + ps.getPlayer().getId() + "\n" +
+                "GROUP BY winner, loser)\n" +
+                "\n" +
+                "SELECT * FROM y\n" +
+                "WHERE value = (SELECT max(value) FROM y)";
+        Cursor cursor = database.rawQuery(sqlState, null);
+
+        List<String> ret = new ArrayList<>();
+        int val = -1;
+
+        while(cursor.moveToNext()){
+            String entry = cursor.getString(cursor.getColumnIndex("player"));
+            val = cursor.getInt(cursor.getColumnIndex("value"));
+            ret.add(entry);
+        }
+        cursor.close();
+        return new Pair<>(val, ret);
+    }
+
+    public Pair<Integer, List<String>> getMostDeaths() {
+        String sqlState = "with y as (\n" +
+                "SELECT count(*) as value, pl.name as player\n" +
+                "FROM places p, players pl\n" +
+                "WHERE p.nr != 1 AND p.evening != 1 AND pl.id = p.winner and p.loser = " + ps.getPlayer().getId() + "\n" +
+                "GROUP BY winner, loser)\n" +
+                "\n" +
+                "SELECT * FROM y\n" +
+                "WHERE value = (SELECT max(value) FROM y)";
+        Cursor cursor = database.rawQuery(sqlState, null);
+
+        List<String> ret = new ArrayList<>();
+        int val = -1;
+
+        while(cursor.moveToNext()){
+            String entry = cursor.getString(cursor.getColumnIndex("player"));
+            val = cursor.getInt(cursor.getColumnIndex("value"));
+            ret.add(entry);
+        }
+        cursor.close();
+        return new Pair<>(val, ret);
+    }
+
+    public double getSD() {
+        String sqlState = "with mean as (\n" +
+                "SELECT avg(nr) AS Mean FROM places WHERE loser = " + ps.getPlayer().getId() + ")\n" +
+                "SELECT avg((nr-mean.mean)*(nr-mean.mean)) as sd from places, mean\n" +
+                "WHERE loser = " + ps.getPlayer().getId();
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return Math.sqrt(cursor.getDouble(0));
+    }
+
+    public double getAverage() {
+        String sqlState = "SELECT avg(places.nr) FROM places\n" +
+                "WHERE loser = " + ps.getPlayer().getId();
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
+    public double getMedian() {
+        String sqlState = "with curr_table AS (\n" +
+                "SELECT nr FROM places WHERE loser = " + ps.getPlayer().getId() + ")\n" +
+                "\n" +
+                "SELECT avg(nr)\n" +
+                "FROM (SELECT nr\n" +
+                "      FROM curr_table\n" +
+                "      ORDER BY nr\n" +
+                "      LIMIT 2 - (SELECT COUNT(*) FROM curr_table) % 2    -- odd 1, even 2\n" +
+                "      OFFSET (SELECT (COUNT(*) - 1) / 2\n" +
+                "              FROM curr_table))";
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
+    }
+
+    public double getNormalizedMean() {
+        String sqlState = "SELECT avg(1.0 * nr/max_val) as normalized from places p1\n" +
+                "JOIN (SELECT max(nr) as max_val, evening FROM places GROUP BY evening) AS p2 \n" +
+                "ON p1.evening = p2.evening AND p1.loser = " + ps.getPlayer().getId();
+
+        Cursor cursor = database.rawQuery(sqlState, null);
+        cursor.moveToLast();
+        return cursor.getDouble(0);
     }
 
     public void saveChanges(View view){

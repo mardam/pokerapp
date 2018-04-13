@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.markusdamm.pokerapp" >
+    package="de.markusdamm.pokerapp">
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/Theme.AppCompat.Light" >
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +20,7 @@
         <activity
             android:name=".PlayerManagement"
             android:label="@string/title_activity_player_management"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.MainActivity" />
@@ -28,7 +28,7 @@
         <activity
             android:name=".EveningManagement"
             android:label="@string/title_activity_evening_management"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.MainActivity" />
@@ -36,14 +36,14 @@
         <activity
             android:name=".SocietyManagement"
             android:label="@string/title_activity_society_management"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.MainActivity" />
         </activity>
         <activity
             android:name=".Statistic"
-            android:label="@string/title_activity_statistic" >
+            android:label="@string/title_activity_statistic">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.MainActivity" />
@@ -51,19 +51,18 @@
         <activity
             android:name=".newEvening"
             android:label="@string/title_activity_new_evening"
-            android:parentActivityName=".EveningManagement" >
+            android:parentActivityName=".EveningManagement">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.EveningManagement" />
         </activity>
         <activity
             android:name=".DatePickerActivity"
-            android:label="@string/title_activity_date_picker" >
-        </activity>
+            android:label="@string/title_activity_date_picker"></activity>
         <activity
             android:name=".LocationManagement"
             android:label="@string/title_activity_location_management"
-            android:parentActivityName=".MainActivity" >
+            android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.MainActivity" />
@@ -71,35 +70,32 @@
         <activity
             android:name=".SingleEvening"
             android:label="@string/title_activity_single_evening"
-            android:parentActivityName=".EveningManagement" >
+            android:parentActivityName=".EveningManagement">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.EveningManagement" />
         </activity>
         <activity
             android:name=".list_item_player"
-            android:label="@string/title_activity_list_item_player" >
-        </activity>
+            android:label="@string/title_activity_list_item_player"></activity>
         <activity
             android:name=".PlayerLooses"
-            android:label="@string/title_activity_player_looses" >
-        </activity>
+            android:label="@string/title_activity_player_looses"></activity>
         <activity
             android:name=".SinglePlayerOverview"
             android:label="@string/title_activity_single_player_overview"
-            android:parentActivityName=".PlayerManagement" >
+            android:parentActivityName=".PlayerManagement">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.PlayerManagement" />
         </activity>
         <activity
             android:name=".PlayerAdderToEvening"
-            android:label="@string/title_activity_player_adder_to_evening" >
-        </activity>
+            android:label="@string/title_activity_player_adder_to_evening"></activity>
         <activity
             android:name=".StatisticOptions"
             android:label="@string/title_activity_statistic_options"
-            android:parentActivityName=".Statistic" >
+            android:parentActivityName=".Statistic">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.Statistic" />
@@ -107,10 +103,18 @@
         <activity
             android:name=".SingleLocation"
             android:label="@string/title_activity_single_location"
-            android:parentActivityName=".LocationManagement" >
+            android:parentActivityName=".LocationManagement">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.LocationManagement" />
+        </activity>
+        <activity
+            android:name=".Records"
+            android:label="@string/title_activity_records"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.markusdamm.pokerapp.MainActivity" />
         </activity>
     </application>
 

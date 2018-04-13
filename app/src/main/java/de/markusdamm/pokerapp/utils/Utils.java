@@ -93,4 +93,19 @@ public class Utils {
         }
         return null;
     }
+
+    public static String formatTimeToString(int minuits){
+        int days = (int)Math.floor(minuits/(60*24));
+        int hours = (int)Math.floor((minuits - days * 60 * 24)/60);
+        String hour = hours + "";
+        if (hours <10){
+            hour = "0" + hour;
+        }
+        int rest = (int)Math.floor(minuits - days * 60 * 24 - hours * 60);
+        String res = rest + "";
+        if (rest < 10){
+            res = "0" + rest;
+        }
+        return days + "d" + hour + "h" + res + "m";
+    }
 }

@@ -57,6 +57,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:text="Teilnahmen"
+        android:id="@+id/participations"
+        android:onClick="participations"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:text="Gesellschaften verwalten"
         android:id="@+id/manageSocieties"
         android:onClick="manageSocieties"

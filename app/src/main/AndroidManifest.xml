@@ -58,7 +58,7 @@
         </activity>
         <activity
             android:name=".DatePickerActivity"
-            android:label="@string/title_activity_date_picker"></activity>
+            android:label="@string/title_activity_date_picker" />
         <activity
             android:name=".LocationManagement"
             android:label="@string/title_activity_location_management"
@@ -77,10 +77,10 @@
         </activity>
         <activity
             android:name=".list_item_player"
-            android:label="@string/title_activity_list_item_player"></activity>
+            android:label="@string/title_activity_list_item_player" />
         <activity
             android:name=".PlayerLooses"
-            android:label="@string/title_activity_player_looses"></activity>
+            android:label="@string/title_activity_player_looses" />
         <activity
             android:name=".SinglePlayerOverview"
             android:label="@string/title_activity_single_player_overview"
@@ -91,7 +91,7 @@
         </activity>
         <activity
             android:name=".PlayerAdderToEvening"
-            android:label="@string/title_activity_player_adder_to_evening"></activity>
+            android:label="@string/title_activity_player_adder_to_evening" />
         <activity
             android:name=".StatisticOptions"
             android:label="@string/title_activity_statistic_options"
@@ -116,6 +116,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.markusdamm.pokerapp.MainActivity" />
         </activity>
+        <activity
+            android:name=".Participations"
+            android:label="@string/title_activity_participations"></activity>
     </application>
 
 </manifest>

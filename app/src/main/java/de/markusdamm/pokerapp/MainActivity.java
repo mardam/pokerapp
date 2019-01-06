@@ -77,6 +77,8 @@ public class MainActivity extends ActionBarActivity {
     }
 
 
-
-
+    public void participations(View view) {
+        Intent intent = new Intent(this, Participations.class);
+        startActivity(intent);
+    }
 }

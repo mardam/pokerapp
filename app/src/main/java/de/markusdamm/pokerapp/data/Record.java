@@ -174,13 +174,12 @@ public class Record {
     }
 
     private static String getFastestLast() {
-        return "SELECT * FROM (SELECT e.name as name, pl.name as player, \n" +
-                "((julianday(p.time) - julianday(e.date)) * 24 * 60) AS value\n" +
-                "FROM evenings as e, places as p, players as pl\n" +
-                "WHERE e.id = p.evening and pl.id = p.loser AND e.name != 'Abend 1' \n" +
-                "AND (p.evening, p.nr) IN (SELECT evening, max(nr) FROM places group by evening))\n" +
-                "WHERE value IS NOT NULL \n" +
-                "ORDER BY value ASC";
+        return "SELECT pl.name as player, ((julianday(p1.time) - julianday(e1.date)) * 24 * 60) AS value, e1.name as name FROM places p1\n" +
+                "INNER JOIN (SELECT evening, count(*) as c FROM places GROUP BY evening) p2 ON p1.evening = p2.evening\n" +
+                "INNER JOIN players pl ON pl.id = p1.loser\n" +
+                "INNER JOIN evenings e1 ON e1.id = p1.evening\n" +
+                "WHERE p2.c = p1.nr AND e1.name != 'Abend 1'\n" +
+                "ORDER BY value";
     }
 
     private static String getWinners() {

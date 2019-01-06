@@ -23,7 +23,9 @@ public class Participations extends ActionBarActivity {
     private List<Participation> participations;
     private ListView entriesLV;
     private Spinner selection;
+    private Spinner sorting;
     private List<String> players;
+    private List<String> sortings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +33,39 @@ public class Participations extends ActionBarActivity {
         setContentView(R.layout.activity_participations);
         entriesLV = (ListView) findViewById(R.id.entries);
         selection = (Spinner) findViewById(R.id.type);
+        sorting = (Spinner) findViewById(R.id.sorting);
 
         players = getPlayers();
 
         final ArrayAdapter listenAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, players);
         selection.setAdapter(listenAdapter);
 
+        sortings = new ArrayList<>();
+
+        sortings.add("Nach Datum");
+        sortings.add("Nach Platzierung");
+        final ArrayAdapter listenAdapterSorting = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, sortings);
+        sorting.setAdapter(listenAdapterSorting);
+
         selection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                participations = getParticipations(players.get(position));
+                participations = getParticipations(players.get(position), (String) sorting.getSelectedItem());
+                fillList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+                // sometimes you need nothing here
+            }
+        });
+
+
+        sorting.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                participations = getParticipations((String) selection.getSelectedItem(), sortings.get(position));
                 fillList();
             }
 
@@ -70,9 +95,23 @@ public class Participations extends ActionBarActivity {
         return ret;
     }
 
-    public List<Participation> getParticipations(String playerName) {
+    public List<Participation> getParticipations(String playerName, String sortingBy) {
         database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
         ArrayList<Participation> ret = new ArrayList<>();
+
+        String sortingString = "";
+
+        if (sortingBy.equals("Nach Datum")) {
+            sortingString = " date";
+        }
+
+        if (sortingBy.equals("Nach Platzierung")) {
+            sortingString = " p.nr, e2.count desc, date";
+        }
+
+        if (sortingString.equals("")) {
+            throw new IllegalArgumentException("sortingBy should be either \"Nach Datum\" or \"Nach Platzierung\". You actually should never end up here.");
+        }
 
         Cursor cursor  = database.rawQuery("SELECT p.nr as position, e.name as evening, pl2.name as beatenby, e2.count as count FROM players pl1, places p, evenings e\n" +
                 "INNER JOIN (SELECT count(*) as count, evening from places\n" +
@@ -81,7 +120,8 @@ public class Participations extends ActionBarActivity {
                 "WHERE e.id = p.evening and p.loser = pl1.id AND pl1.name = \"" +
                 playerName +
                 "\"\n" +
-                "ORDER BY date", null);
+                "ORDER BY " +
+                sortingString, null);
         while(cursor.moveToNext()){
             String eveningName = cursor.getString(cursor.getColumnIndex("evening"));
             int position = cursor.getInt(cursor.getColumnIndex("position"));

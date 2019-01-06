@@ -15,11 +15,20 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"/>
 
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/sorting"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/type"/>
+
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/entries"
-        android:layout_below="@+id/type"
+        android:layout_below="@+id/sorting"
         android:drawSelectorOnTop="false"/>
 
 </RelativeLayout>

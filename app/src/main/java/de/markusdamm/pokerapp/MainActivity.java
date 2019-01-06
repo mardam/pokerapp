@@ -81,4 +81,9 @@ public class MainActivity extends ActionBarActivity {
         Intent intent = new Intent(this, Participations.class);
         startActivity(intent);
     }
+
+    public void showChips(View view) {
+        Intent intent = new Intent(this, Chips.class);
+        startActivity(intent);
+    }
 }

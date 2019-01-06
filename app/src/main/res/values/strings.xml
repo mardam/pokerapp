@@ -22,4 +22,5 @@
     <string name="title_activity_single_location">SingleLocation</string>
     <string name="title_activity_records">Rekorde</string>
     <string name="title_activity_participations">Teilnahmen</string>
+    <string name="title_activity_chips">Chips Verteilungen</string>
 </resources>

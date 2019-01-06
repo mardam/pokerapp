@@ -1,8 +1,7 @@
 package de.markusdamm.pokerapp.data;
 
-import android.widget.Toast;
-
 import java.util.ArrayList;
+import java.util.Objects;
 
 import de.markusdamm.pokerapp.utils.Utils;
 
@@ -62,43 +61,43 @@ public class Record {
     }
 
     public static String getDBRequest(String kind) {
-        if (kind == "Längster Abend") {
+        if (kind.equals("Längster Abend")) {
             return getLongestEvening();
         }
-        if (kind == "Frühester Beginn") {
+        if (kind.equals("Frühester Beginn")) {
             return getEarliestStart();
         }
-        if (kind == "Frühestes Ende") {
+        if (kind.equals("Frühestes Ende")) {
             return getEarliestEnd();
         }
-        if (kind == "Weiblichster Abend") {
+        if (kind.equals("Weiblichster Abend")) {
             return getMostFemaleEvening();
         }
-        if (kind == "Frühestes Ausscheiden") {
+        if (kind.equals("Frühestes Ausscheiden")) {
             return getEarliestDead();
         }
-        if (kind == "Schnellstes Ausscheiden") {
+        if (kind.equals("Schnellstes Ausscheiden")) {
             return getFastestDead();
         }
-        if (kind == "Meiste Teilnehmer") {
+        if (kind.equals("Meiste Teilnehmer")) {
             return getMostParticipants();
         }
-        if (kind == "Multikills") {
+        if (kind.equals("Multikills")) {
             return getMultikills();
         }
-        if (kind == "Schnellster Letzter") {
+        if (kind.equals("Schnellster Letzter")) {
             return getFastestLast();
         }
-        if (kind == "Sieger") {
+        if (kind.equals("Sieger")) {
             return getWinners();
         }
-        if (kind == "Kills") {
+        if (kind.equals("Kills")) {
             return getKills();
         }
-        if (kind == "Tode") {
+        if (kind.equals("Tode")) {
             return getDeaths();
         }
-        if (kind == "Längste Killstreak") {
+        if (kind.equals("Längste Killstreak")) {
             return getLongestStreak();
         }
         throw new IllegalArgumentException("Illegal kind in getDBRequest for Record" + kind);
@@ -138,18 +137,20 @@ public class Record {
     }
 
     private static String getEarliestDead() {
-        return "select e.name as name, pl.name as player, \n" +
+        return  "select e.name as name, pl.name as player, \n" +
                 "strftime('%H:%M', p.time) as value\n" +
                 "from evenings as e, places as p, players as pl\n" +
-                "WHERE e.id = p.evening AND p.loser = pl.id AND e.name != 'Abend 1'\n" +
+                "WHERE e.id = p.evening AND p.loser = pl.id AND e.name != 'Abend 1' AND p.time is not null \n" +
                 "ORDER BY strftime('%H:%M',DATETIME(p.TIME, '-12 hours'))";
     }
 
     private static String getFastestDead() {
-        return "SELECT e.name as name, pl.name as player, \n" +
+        return "SELECT * FROM (\n " +
+                "SELECT e.name as name, pl.name as player, \n" +
                 "((julianday(p.time) - julianday(e.date)) * 24 * 60) AS value \n" +
                 "FROM evenings as e, places as p, players as pl \n" +
-                "WHERE e.id = p.evening and pl.id = p.loser AND e.name != 'Abend 1'\n" +
+                "WHERE e.id = p.evening and pl.id = p.loser AND e.name != 'Abend 1') \n" +
+                "WHERE value IS NOT NULL \n" +
                 "ORDER BY value ASC";
     }
 
@@ -173,11 +174,12 @@ public class Record {
     }
 
     private static String getFastestLast() {
-        return "SELECT e.name as name, pl.name as player, \n" +
+        return "SELECT * FROM (SELECT e.name as name, pl.name as player, \n" +
                 "((julianday(p.time) - julianday(e.date)) * 24 * 60) AS value\n" +
                 "FROM evenings as e, places as p, players as pl\n" +
                 "WHERE e.id = p.evening and pl.id = p.loser AND e.name != 'Abend 1' \n" +
-                "AND (p.evening, p.nr) IN (SELECT evening, max(nr) FROM places group by evening)\n" +
+                "AND (p.evening, p.nr) IN (SELECT evening, max(nr) FROM places group by evening))\n" +
+                "WHERE value IS NOT NULL \n" +
                 "ORDER BY value ASC";
     }
 
@@ -229,43 +231,43 @@ public class Record {
     }
 
     public static String getType(String kind) {
-        if (kind == "Längster Abend") {
+        if (kind.equals("Längster Abend")) {
             return "minuts";
         }
-        if (kind == "Frühester Beginn") {
+        if (kind.equals("Frühester Beginn")) {
             return "time";
         }
-        if (kind == "Frühestes Ende") {
+        if (kind.equals("Frühestes Ende")) {
             return "time";
         }
-        if (kind == "Weiblichster Abend") {
+        if (kind.equals("Weiblichster Abend")) {
             return "percent";
         }
-        if (kind == "Frühestes Ausscheiden") {
+        if (kind.equals("Frühestes Ausscheiden")) {
             return "time+player";
         }
-        if (kind == "Schnellstes Ausscheiden") {
+        if (kind.equals("Schnellstes Ausscheiden")) {
             return "minuts+player";
         }
-        if (kind == "Meiste Teilnehmer") {
+        if (kind.equals("Meiste Teilnehmer")) {
             return "number";
         }
-        if (kind == "Multikills") {
+        if (kind.equals("Multikills")) {
             return "number+player";
         }
-        if (kind == "Schnellster Letzter") {
+        if (kind.equals("Schnellster Letzter")) {
             return "minuts+player";
         }
-        if (kind == "Sieger") {
+        if (kind.equals("Sieger")) {
             return "number+player";
         }
-        if (kind == "Kills") {
+        if (kind.equals("Kills")) {
             return "number+player";
         }
-        if (kind == "Tode") {
+        if (kind.equals("Tode")) {
             return "number+player";
         }
-        if (kind == "Längste Killstreak") {
+        if (kind.equals("Längste Killstreak")) {
             return "number+player";
         }
         throw new IllegalArgumentException("Illegal kind for type in Records");
@@ -273,31 +275,31 @@ public class Record {
 
     @Override
     public String toString() {
-        if (this.type == "time") {
+        if (this.type.equals("time")) {
             return position + ": " + evening + " (" + value + ")";
         }
 
-        if (this.type == "minuts") {
+        if (this.type.equals("minuts")) {
             return position + ": " + evening + " (" + value + " Minuten | " + Utils.formatTimeToString(Integer.parseInt(value)) + ")";
         }
 
-        if (this.type == "percent") {
+        if (this.type.equals("percent")) {
             return position + ": " + evening + " (" + (Math.round(Double.parseDouble(value) * 100)) / 100.0 + " %)";
         }
 
-        if (this.type == "number") {
+        if (this.type.equals("number")) {
             return position + ": " + evening + " (" + value + ")";
         }
 
-        if (this.type == "time+player") {
+        if (this.type.equals("time+player")) {
             return position + ": " + player + " (" + evening + " | " + value + ")";
         }
 
-        if (this.type == "minuts+player") {
+        if (this.type.equals("minuts+player")) {
             return position + ": " + player + " (" + evening + " | " + value + " Minuten | " + Utils.formatTimeToString(Integer.parseInt(value)) + ")";
         }
 
-        if (this.type == "number+player") {
+        if (this.type.equals("number+player")) {
             return position + ": " + player + " (" + evening + " | " + value + ")";
         }
 

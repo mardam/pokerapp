@@ -73,13 +73,14 @@ public class Chips extends ActionBarActivity {
         int blackCount = (int) Math.floor((double) blacks / progress);
 
         int chipCount = redCount * 5 + blueCount * 10 + greenCount * 25 + whiteCount * 50 + blackCount * 100;
+        int totalCount = chipCount * progress;
 
         tvReds.setText(Integer.toString(redCount));
         tvBlues.setText(Integer.toString(blueCount));
         tvGreens.setText(Integer.toString(greenCount));
         tvWhites.setText(Integer.toString(whiteCount));
         tvBlacks.setText(Integer.toString(blackCount));
-        tvChipCount.setText("Gesamtwert an Chips pro Spieler: " + String.format("%,d", chipCount));
+        tvChipCount.setText("Gesamtwert an Chips pro Spieler: " + String.format("%,d", chipCount) + "\n" + "Wert an Chips im Spiel: " + String.format("%,d", totalCount));
         playerCount.setText("Anzahl an Teilnehmern: " + progress);
     }
 

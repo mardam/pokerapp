@@ -27,7 +27,7 @@
 
     <TextView
         android:id="@+id/countRed"
-        android:layout_margin="20dp"
+        android:layout_margin="15dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -37,7 +37,7 @@
 
     <TextView
         android:id="@+id/countBlue"
-        android:layout_margin="20dp"
+        android:layout_margin="15dp"
         android:layout_width="fill_parent"
         android:gravity="center"
         android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
 
     <TextView
         android:id="@+id/countGreen"
-        android:layout_margin="20dp"
+        android:layout_margin="15dp"
         android:layout_width="fill_parent"
         android:gravity="center"
         android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
 
     <TextView
         android:id="@+id/countWhite"
-        android:layout_margin="20dp"
+        android:layout_margin="15dp"
         android:layout_width="fill_parent"
         android:gravity="center"
         android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
 
     <TextView
         android:id="@+id/countBlack"
-        android:layout_margin="20dp"
+        android:layout_margin="15dp"
         android:layout_width="fill_parent"
         android:gravity="center"
         android:layout_height="wrap_content"

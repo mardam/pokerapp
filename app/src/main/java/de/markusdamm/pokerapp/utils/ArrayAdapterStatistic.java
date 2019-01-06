@@ -62,7 +62,7 @@ public class ArrayAdapterStatistic extends ArrayAdapter<PlayerStatistic> {
 
     private String formatNumberForAgeText(Number value) {
         if (value instanceof Integer) {
-            return Integer.toString((Integer) value);
+            return String.format("%,d", value);
         } else {
             return f.format(value.doubleValue());
         }

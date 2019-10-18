@@ -49,6 +49,9 @@ public class Placement implements Comparable<Placement>{
 
     @Override
     public int compareTo(Placement another) {
-        return this.getNumber();
+        if (this.getNumber() == another.getNumber()) {
+            return 0;
+        }
+        return this.getNumber() < another.getNumber() ? -1 : 1;
     }
 }

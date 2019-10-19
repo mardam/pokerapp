@@ -1,16 +1,13 @@
-package de.markusdamm.pokerapp;
+package de.markusdamm.pokerapp
 
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 
 
-public class list_item_player extends ActionBarActivity {
+class ListItemPlayer : AppCompatActivity() {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_item_player);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_list_item_player)
     }
 }

@@ -43,7 +43,7 @@ public class ArrayAdapterPlayer extends ArrayAdapter<Player> {
         TextView separator = (TextView) row.findViewById(R.id.seperator);
 
         name.setText(players.get(position).getName());
-        age.setText(Gender.getString(players.get(position).getGender()) + "");
+        age.setText(Gender.INSTANCE.getString(players.get(position).getGender()) + "");
         if (!players.get(position).isSelectable()){
             players.get(position).setSelected(false);
             name.setTextColor(Color.GREEN);

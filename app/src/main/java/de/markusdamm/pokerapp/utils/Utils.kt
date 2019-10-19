@@ -1,111 +1,54 @@
-package de.markusdamm.pokerapp.utils;
+package de.markusdamm.pokerapp.utils
 
-import android.widget.Toast;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import de.markusdamm.pokerapp.data.Placement;
-import de.markusdamm.pokerapp.data.Player;
+import java.util.Calendar
+import de.markusdamm.pokerapp.data.Player
+import kotlin.math.floor
 
 /**
  * Created by Markus Damm on 25.03.2015.
  */
-public class Utils {
+object Utils {
 
-    public static String getDate(){
-        Calendar c = Calendar.getInstance();
-        int year, month,day;
-        year = c.get(Calendar.YEAR);
-        month = c.get(Calendar.MONTH) + 1;
-        day = c.get(Calendar.DAY_OF_MONTH);
-        return addZeros(day) + "." + addZeros(month) + "." + Integer.toString(year);
+    val date: String
+        get() {
+            val c = Calendar.getInstance()
+            val year: Int = c.get(Calendar.YEAR)
+            val month: Int = c.get(Calendar.MONTH) + 1
+            val day: Int = c.get(Calendar.DAY_OF_MONTH)
+            return "${addZeros(day)}.${addZeros(month)}.$year"
+        }
+
+    val time: String
+        get() {
+            val c = Calendar.getInstance()
+            val hour: Int = c.get(Calendar.HOUR_OF_DAY)
+            val minute: Int = c.get(Calendar.MINUTE)
+            return "${addZeros(hour)}:${addZeros(minute)}"
+        }
+
+    private fun addZeros(i: Int): String {
+        return if (i < 10) {
+            "0$i"
+        } else {
+            i.toString()
+        }
     }
 
-    public static String addZeros(int i){
-        if (i<10){
-            return "0" + Integer.toString(i);
-        }
-        else{
-            return Integer.toString(i);
-        }
+    fun getPlayerById(players: Collection<Player>, id: Int): Player? {
+        return players.firstOrNull { it.id == id }
     }
 
-    public static String getTime(){
-        Calendar c = Calendar.getInstance();
-        int hour, minute;
-        hour = c.get(Calendar.HOUR_OF_DAY);
-        minute = c.get(Calendar.MINUTE);
-        return addZeros(hour) + ":" + addZeros(minute);
+    fun getPlayerByName(playerList: Collection<Player>, name: String): Player? {
+        return playerList.firstOrNull { it.name == name }
     }
 
-
-    public static Date getCurrentDate(){
-        return new Date();
-    }
-
-    public static Player getPlayerFromMap(Map<Player,Boolean> players,String name){
-        for (Player pl:players.keySet()){
-            if (pl.getName().equals(name)){
-                return pl;
-            }
-        }
-        return null;
-    }
-
-    public static Player getPlayerFromPlayerSetById(Set<Player> players, int id){
-        for (Player pl:players){
-            if (pl.getId() == id){
-                return pl;
-            }
-        }
-        return null;
-    }
-
-    public static Player getPlayerFromPlayerSetByName(Set<Player> players, String name){
-        for (Player pl:players){
-            if (pl.getName().equals(name)){
-                return pl;
-            }
-        }
-        return null;
-    }
-
-
-    public static Player getPlayerFromList(List<Player> playerList,String name){
-        for (Player pl:playerList){
-            if (pl.getName().equals(name)){
-                return pl;
-            }
-        }
-        return null;
-    }
-
-    public static Player getPlayerFromListById(List<Player> playerList,int id){
-        for (int i = 0; i<playerList.size();i++){
-            Player pl = playerList.get(i);
-            if (pl.getId() == id){
-                return pl;
-            }
-        }
-        return null;
-    }
-
-    public static String formatTimeToString(int minuits){
-        int days = (int)Math.floor(minuits/(60*24));
-        int hours = (int)Math.floor((minuits - days * 60 * 24)/60);
-        String hour = hours + "";
-        if (hours <10){
-            hour = "0" + hour;
-        }
-        int rest = (int)Math.floor(minuits - days * 60 * 24 - hours * 60);
-        String res = rest + "";
-        if (rest < 10){
-            res = "0" + rest;
-        }
-        return days + "d" + hour + "h" + res + "m";
+    fun formatTimeToString(minuits: Int): String {
+        val days = floor((minuits / (60 * 24)).toDouble()).toInt()
+        val hours = floor(((minuits - days * 60 * 24) / 60).toDouble()).toInt()
+        val hour = addZeros(hours)
+        val rest = floor((minuits - days * 60 * 24 - hours * 60).toDouble()).toInt()
+        val res = addZeros(rest)
+        return "${days}d${hour}h${res}m"
     }
 }

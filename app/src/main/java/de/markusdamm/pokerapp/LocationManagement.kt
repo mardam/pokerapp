@@ -1,113 +1,91 @@
-package de.markusdamm.pokerapp;
+package de.markusdamm.pokerapp
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
+import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.ListView
+import android.widget.Toast
 
-import java.util.ArrayList;
+import java.util.ArrayList
 
-import de.markusdamm.pokerapp.data.Location;
+import de.markusdamm.pokerapp.data.Location
+import de.markusdamm.pokerapp.database.DatabaseHelper
 
 
-public class LocationManagement extends ActionBarActivity {
-    private SQLiteDatabase database;
-    private ListView locations;
-    private EditText et;
-    ArrayList<String> locationList = new ArrayList<>();
+class LocationManagement : AppCompatActivity() {
+    private var database: SQLiteDatabase = DatabaseHelper.database
+    private lateinit var locations: ListView
+    private lateinit var et: EditText
+    private var locationList = ArrayList<String>()
 
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_location_management);
-        fillList();
-        et = (EditText) findViewById(R.id.newLocation);
-        addListenerOnListViewItemSelection();
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_location_management)
+        fillList()
+        et = findViewById<View>(R.id.newLocation) as EditText
+        addListenerOnListViewItemSelection()
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == 7){
-            fillList();
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (resultCode == 7) {
+            fillList()
         }
     }
 
-
-    public void fillLocationList(){
-        locationList.clear();
-        database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
-
-        Cursor cursor  = database.rawQuery("SELECT name FROM locations ORDER BY name ASC", null);
-        while(cursor.moveToNext()){
-            String entry = cursor.getString(cursor.getColumnIndex("name"));
-            locationList.add(entry);
+    private fun fillLocationList() {
+        locationList.clear()
+        val cursor = database.rawQuery("SELECT name FROM locations ORDER BY name ASC", null)
+        while (cursor.moveToNext()) {
+            val entry = cursor.getString(cursor.getColumnIndex("name"))
+            locationList.add(entry)
         }
-        cursor.close();
-        database.close();
+        cursor.close()
     }
 
-    public void saveLocation(View view){
-        String s = et.getText().toString();
-        if (!s.equals("")){
-            addLocationToDB(s);
+    fun saveLocation(view: View) {
+        val s = et.text.toString()
+        if (s != "") {
+            addLocationToDB(s)
         }
-        et.setText("");
+        et.setText("")
     }
 
-    public void fillList(){
-        fillLocationList();
-        locations = (ListView) findViewById(R.id.locations);
-        ListAdapter listenAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, locationList);
-        locations.setAdapter(listenAdapter);
+    private fun fillList() {
+        fillLocationList()
+        locations = findViewById<View>(R.id.locations) as ListView
+        val listenAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, locationList)
+        locations.adapter = listenAdapter
     }
 
-    public void addLocationToDB(String location){
-        if (!locationList.contains(location)){
-            database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
-            database.execSQL("INSERT INTO locations (name) VALUES('" + location + "');'");
-            database.close();
-            fillList();
+    private fun addLocationToDB(location: String) {
+        if (!locationList.contains(location)) {
+            database.execSQL("INSERT INTO locations (name) VALUES('$location');'")
+            fillList()
+        } else {
+            Toast.makeText(this, "Spieler existiert schon", Toast.LENGTH_LONG).show()
         }
-        else{
-            Toast.makeText(this,"Spieler existiert schon",Toast.LENGTH_LONG).show();
+    }
+
+    private fun addListenerOnListViewItemSelection() {
+        locations.isClickable = true
+        locations.setOnItemClickListener { parent, _, position, _ ->
+            val item = locations.getItemAtPosition(position) as String
+            val location = Location(item)
+            val intent = Intent(parent.context, SingleLocation::class.java)
+            intent.putExtra("id", getIDForLocation(location))
+            startActivityForResult(intent, 0)
         }
-
     }
 
-    public void addListenerOnListViewItemSelection() {
-        locations.setClickable(true);
-        locations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = (String) locations.getItemAtPosition(position);
-                Location location = new Location(item);
-                Intent intent = new Intent(parent.getContext(), SingleLocation.class);
-                intent.putExtra("id", getIDForLocation(location));
-                startActivityForResult(intent, 0);
-            }
-        });
-    }
-
-    public int getIDForLocation(Location location){
-        database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
-
-        Cursor cursor  = database.rawQuery("SELECT id FROM locations WHERE name = '" + location.getName() + "';", null);
-        cursor.moveToLast();
-        int entry = cursor.getInt(cursor.getColumnIndex("id"));
-        cursor.close();
-        database.close();
-
-        return entry;
+    private fun getIDForLocation(location: Location): Int {
+        val cursor = database.rawQuery("SELECT id FROM locations WHERE name = '${location.name}';", null)
+        cursor.moveToLast()
+        val entry = cursor.getInt(cursor.getColumnIndex("id"))
+        cursor.close()
+        return entry
     }
 }

@@ -1,14 +1,34 @@
-package de.markusdamm.pokerapp.database;
+package de.markusdamm.pokerapp.database
 
-
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteDatabase.openOrCreateDatabase
 
 /**
  * Created by Markus Damm on 28.03.2015.
  */
-public class DatabaseUtils{
-  /*  private String databaseName = "pokerDB";
+class DatabaseHelper {
+
+    companion object {
+        val database : SQLiteDatabase = openOrCreateDatabase("pokerDB", null, null)
+
+        fun getLastInt(query: String) : Int {
+            val cursor = database.rawQuery(query, null)
+            cursor.moveToLast()
+            val ret = cursor.getInt(0)
+            cursor.close()
+            return ret
+        }
+
+        fun getLastDouble(query: String) : Double {
+            val cursor = database.rawQuery(query, null)
+            cursor.moveToLast()
+            val ret = cursor.getDouble(0)
+            cursor.close()
+            return ret
+        }
+    }
+}
+/*  private String databaseName = "pokerDB";
     private SQLiteDatabase database;
 
     public String getDatabaseName(){
@@ -40,6 +60,3 @@ public class DatabaseUtils{
         database.close();
 
     }*/
-
-
-}

@@ -1,101 +1,102 @@
-package de.markusdamm.pokerapp;
+package de.markusdamm.pokerapp
 
-import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
+import android.content.Intent
+import android.database.sqlite.SQLiteDatabase
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 
-import java.util.ArrayList;
+import java.util.ArrayList
 
-import de.markusdamm.pokerapp.data.Gender;
-import de.markusdamm.pokerapp.data.PlayerStatistic;
+import de.markusdamm.pokerapp.data.Gender
+import de.markusdamm.pokerapp.data.PlayerStatistic
+import de.markusdamm.pokerapp.database.DatabaseHelper
 
 
-public class StatisticOptions extends ActionBarActivity {
+class StatisticOptions : AppCompatActivity() {
 
-    private SQLiteDatabase database;
-    private Spinner spGender, spChoice1, spChoice2, spChoice3, spLocation;
-    private ArrayList<String> locationList = new ArrayList<>();
+    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var spGender: Spinner? = null
+    private var spChoice1: Spinner? = null
+    private var spChoice2: Spinner? = null
+    private var spChoice3: Spinner? = null
+    private var spLocation: Spinner? = null
+    private val locationList = ArrayList<String>()
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_statistic_options);
-        spGender = (Spinner) findViewById(R.id.spGender);
-        spChoice1 = (Spinner) findViewById(R.id.spChoice1);
-        spChoice2 = (Spinner) findViewById(R.id.spChoice2);
-        spChoice3 = (Spinner) findViewById(R.id.spChoice3);
-        spLocation = (Spinner) findViewById(R.id.spLocation);
-        fillLists();
-        Intent intent = getIntent();
-        spGender.setSelection(intent.getIntExtra("gender",0));
-        spChoice1.setSelection(getPositionForString(intent.getStringExtra("choice1")));
-        spChoice2.setSelection(getPositionForString(intent.getStringExtra("choice2")));
-        spChoice3.setSelection(getPositionForString(intent.getStringExtra("choice3")));
-        spLocation.setSelection(locationList.indexOf(intent.getStringExtra("location")));
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_statistic_options)
+        spGender = findViewById<View>(R.id.spGender) as Spinner
+        spChoice1 = findViewById<View>(R.id.spChoice1) as Spinner
+        spChoice2 = findViewById<View>(R.id.spChoice2) as Spinner
+        spChoice3 = findViewById<View>(R.id.spChoice3) as Spinner
+        spLocation = findViewById<View>(R.id.spLocation) as Spinner
+        fillLists()
+        val intent = intent
+        spGender!!.setSelection(intent.getIntExtra("gender", 0))
+        spChoice1!!.setSelection(getPositionForString(intent.getStringExtra("choice1")))
+        spChoice2!!.setSelection(getPositionForString(intent.getStringExtra("choice2")))
+        spChoice3!!.setSelection(getPositionForString(intent.getStringExtra("choice3")))
+        spLocation!!.setSelection(locationList.indexOf(intent.getStringExtra("location")))
     }
 
-    public int getPositionForString(String string){
-        PlayerStatistic ps = new PlayerStatistic(null);
-        ArrayList<String> strings = ps.getStrings();
-        for (int i = 0; i<strings.size();i++){
-            if (string.equals(strings.get(i))){
-                return i;
+    private fun getPositionForString(string: String): Int {
+        val ps = PlayerStatistic(null)
+        val strings = ps.strings
+        for (i in strings.indices) {
+            if (string == strings[i]) {
+                return i
             }
         }
-        return 0;
+        return 0
     }
 
 
-    public void fillLists(){
-        PlayerStatistic ps = new PlayerStatistic(null);
-        fillGender();
-        fillLocations();
-        ArrayList<String> choiceList = ps.getStrings();
-        ArrayAdapter listenAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item,choiceList);
-        spChoice1.setAdapter(listenAdapter);
-        spChoice2.setAdapter(listenAdapter);
-        spChoice3.setAdapter(listenAdapter);
+    private fun fillLists() {
+        val ps = PlayerStatistic(null)
+        fillGender()
+        fillLocations()
+        val choiceList = ps.strings
+        val listenAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, choiceList)
+        spChoice1!!.adapter = listenAdapter
+        spChoice2!!.adapter = listenAdapter
+        spChoice3!!.adapter = listenAdapter
     }
 
-    public void fillGender(){
-        ArrayList<String> genderList = new ArrayList<>();
-        genderList.add(Gender.BOTH_STRING);
-        genderList.add(Gender.MALE_STRING);
-        genderList.add(Gender.FEMALE_STRING);
-        ArrayAdapter listenAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, genderList);
-        spGender.setAdapter(listenAdapter);
+    private fun fillGender() {
+        val genderList = ArrayList<String>()
+        genderList.add(Gender.BOTH_STRING)
+        genderList.add(Gender.MALE_STRING)
+        genderList.add(Gender.FEMALE_STRING)
+        val listenAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, genderList)
+        spGender!!.adapter = listenAdapter
     }
 
-    public void fillLocations(){
-        locationList.add("alle");
-        database = openOrCreateDatabase("pokerDB", MODE_PRIVATE,null);
+    private fun fillLocations() {
+        locationList.add("alle")
 
-        Cursor cursor  = database.rawQuery("SELECT name FROM locations ORDER BY name ASC", null);
-        while(cursor.moveToNext()){
-            String entry = cursor.getString(cursor.getColumnIndex("name"));
-            locationList.add(entry);
+        val cursor = database.rawQuery("SELECT name FROM locations ORDER BY name ASC", null)
+        while (cursor.moveToNext()) {
+            val entry = cursor.getString(cursor.getColumnIndex("name"))
+            locationList.add(entry)
         }
-        cursor.close();
-        database.close();
+        cursor.close()
 
-        ArrayAdapter listenAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locationList);
-        spLocation.setAdapter(listenAdapter);
+        val listenAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, locationList)
+        spLocation!!.adapter = listenAdapter
     }
 
-    public void saveOptions(View view){
-        Intent intent = new Intent();
-        intent.putExtra("gender",(String)spGender.getSelectedItem());
-        intent.putExtra("choice1",(String)spChoice1.getSelectedItem());
-        intent.putExtra("choice2",(String)spChoice2.getSelectedItem());
-        intent.putExtra("choice3",(String)spChoice3.getSelectedItem());
-        intent.putExtra("location", (String)spLocation.getSelectedItem());
+    fun saveOptions(view: View) {
+        val intent = Intent()
+        intent.putExtra("gender", spGender!!.selectedItem as String)
+        intent.putExtra("choice1", spChoice1!!.selectedItem as String)
+        intent.putExtra("choice2", spChoice2!!.selectedItem as String)
+        intent.putExtra("choice3", spChoice3!!.selectedItem as String)
+        intent.putExtra("location", spLocation!!.selectedItem as String)
 
-        setResult(1, intent);
-        finish();
+        setResult(1, intent)
+        finish()
     }
 }

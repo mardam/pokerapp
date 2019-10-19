@@ -76,7 +76,7 @@
                 android:value="de.markusdamm.pokerapp.EveningManagement" />
         </activity>
         <activity
-            android:name=".list_item_player"
+            android:name=".ListItemPlayer"
             android:label="@string/title_activity_list_item_player" />
         <activity
             android:name=".PlayerLooses"

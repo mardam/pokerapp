@@ -8,16 +8,7 @@ import android.util.Pair
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ListView
-import android.widget.Switch
-import android.widget.Toast
-
-import java.text.ParseException
-import java.util.ArrayList
-import java.util.Date
-
+import android.widget.*
 import de.markusdamm.pokerapp.data.Gender
 import de.markusdamm.pokerapp.data.Player
 import de.markusdamm.pokerapp.data.PlayerStatistic
@@ -25,13 +16,15 @@ import de.markusdamm.pokerapp.database.DatabaseHelper
 import de.markusdamm.pokerapp.database.DatabaseHelper.Companion.getLastDouble
 import de.markusdamm.pokerapp.database.DatabaseHelper.Companion.getLastInt
 import de.markusdamm.pokerapp.utils.DateFormats
+import java.text.ParseException
+import java.util.*
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 
 class SinglePlayerOverview : AppCompatActivity() {
 
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private var ps: PlayerStatistic? = null
     private var sGender: Switch? = null
     private var etName: EditText? = null

@@ -10,13 +10,12 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import de.markusdamm.pokerapp.database.DatabaseHelper
-
-import java.util.ArrayList
+import java.util.*
 
 
 class EveningManagement : AppCompatActivity() {
 
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private lateinit var evenings: ListView
 
     override fun onResume() {

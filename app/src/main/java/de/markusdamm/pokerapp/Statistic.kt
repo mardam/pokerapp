@@ -10,12 +10,6 @@ import android.view.View
 import android.widget.ListAdapter
 import android.widget.ListView
 import android.widget.TextView
-
-import java.text.ParseException
-import java.util.ArrayList
-import java.util.Date
-import java.util.HashSet
-
 import de.markusdamm.pokerapp.data.Gender
 import de.markusdamm.pokerapp.data.Player
 import de.markusdamm.pokerapp.data.PlayerStatistic
@@ -24,13 +18,15 @@ import de.markusdamm.pokerapp.database.DatabaseHelper.Companion.getLastDouble
 import de.markusdamm.pokerapp.database.DatabaseHelper.Companion.getLastInt
 import de.markusdamm.pokerapp.utils.ArrayAdapterStatistic
 import de.markusdamm.pokerapp.utils.DateFormats
+import java.text.ParseException
+import java.util.*
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 class Statistic : AppCompatActivity() {
 
     private val pStatistics = ArrayList<PlayerStatistic>()
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private var gender: Int = 0
     private var tv: TextView? = null
     private var choice1: String? = null
@@ -330,10 +326,10 @@ class Statistic : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == 1) {
-            gender = Gender.getIntByString(data.getStringExtra("gender"))
+            gender = Gender.getIntByString(data!!.getStringExtra("gender"))
             choice1 = data.getStringExtra("choice1")
             choice2 = data.getStringExtra("choice2")
             choice3 = data.getStringExtra("choice3")

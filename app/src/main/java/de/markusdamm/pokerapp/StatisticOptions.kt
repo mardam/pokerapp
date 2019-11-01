@@ -7,17 +7,15 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-
-import java.util.ArrayList
-
 import de.markusdamm.pokerapp.data.Gender
 import de.markusdamm.pokerapp.data.PlayerStatistic
 import de.markusdamm.pokerapp.database.DatabaseHelper
+import java.util.*
 
 
 class StatisticOptions : AppCompatActivity() {
 
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private var spGender: Spinner? = null
     private var spChoice1: Spinner? = null
     private var spChoice2: Spinner? = null

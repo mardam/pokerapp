@@ -10,15 +10,12 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
-
-import java.text.ParseException
-import java.util.ArrayList
-import java.util.Date
-
 import de.markusdamm.pokerapp.data.Evening
 import de.markusdamm.pokerapp.data.Location
 import de.markusdamm.pokerapp.database.DatabaseHelper
 import de.markusdamm.pokerapp.utils.DateFormats
+import java.text.ParseException
+import java.util.*
 
 
 class NewEvening : AppCompatActivity() {
@@ -27,7 +24,7 @@ class NewEvening : AppCompatActivity() {
     private lateinit var timeEdit: EditText
     private lateinit var locs: Spinner
     private var nameEdit: EditText? = null
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
 
     val locations: ArrayList<String>
         get() {

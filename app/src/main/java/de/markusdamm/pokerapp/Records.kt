@@ -7,18 +7,14 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ListAdapter
 import android.widget.ListView
 import android.widget.Spinner
-
-import java.util.ArrayList
-import java.util.Arrays
-
 import de.markusdamm.pokerapp.data.Record
 import de.markusdamm.pokerapp.database.DatabaseHelper
+import java.util.*
 
 class Records : AppCompatActivity() {
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private var records: ArrayList<String>? = null
     private var entriesLV: ListView? = null
     private var selection: Spinner? = null

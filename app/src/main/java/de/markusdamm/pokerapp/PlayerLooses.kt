@@ -8,21 +8,18 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.Toast
-
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.HashSet
-
 import de.markusdamm.pokerapp.data.Player
 import de.markusdamm.pokerapp.database.DatabaseHelper
 import de.markusdamm.pokerapp.utils.DateFormats
 import de.markusdamm.pokerapp.utils.Utils
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PlayerLooses : AppCompatActivity() {
 
     private val playerSet = HashSet<Player>()
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private var sLoser: Spinner? = null
     private var sWinner: Spinner? = null
     private var eveningId: Int = 0

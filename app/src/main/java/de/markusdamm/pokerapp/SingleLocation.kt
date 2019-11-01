@@ -11,14 +11,13 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
-
-import java.util.ArrayList
-
 import de.markusdamm.pokerapp.data.Location
+import de.markusdamm.pokerapp.database.DatabaseHelper
+import java.util.*
 
 class SingleLocation : AppCompatActivity() {
 
-    private var database: SQLiteDatabase = de.markusdamm.pokerapp.database.DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private var etName: EditText? = null
     private var location: Location? = null
     private var locationId: Int = 0

@@ -9,15 +9,13 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
-
-import java.util.ArrayList
-
 import de.markusdamm.pokerapp.data.Location
 import de.markusdamm.pokerapp.database.DatabaseHelper
+import java.util.*
 
 
 class LocationManagement : AppCompatActivity() {
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private lateinit var locations: ListView
     private lateinit var et: EditText
     private var locationList = ArrayList<String>()
@@ -30,7 +28,7 @@ class LocationManagement : AppCompatActivity() {
         addListenerOnListViewItemSelection()
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == 7) {
             fillList()
         }

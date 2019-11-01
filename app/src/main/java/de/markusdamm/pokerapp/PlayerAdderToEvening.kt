@@ -8,18 +8,16 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
-
-import java.util.ArrayList
-
 import de.markusdamm.pokerapp.data.Player
 import de.markusdamm.pokerapp.database.DatabaseHelper
 import de.markusdamm.pokerapp.utils.ArrayAdapterPlayer
 import de.markusdamm.pokerapp.utils.Utils
+import java.util.*
 
 
 class PlayerAdderToEvening : AppCompatActivity() {
 
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private lateinit var playerLV: ListView
     private lateinit var et: EditText
     private var playerList = ArrayList<Player>()

@@ -1,8 +1,10 @@
 package de.markusdamm.pokerapp
 
+import android.Manifest
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import de.markusdamm.pokerapp.database.DatabaseHelper
@@ -10,13 +12,28 @@ import de.markusdamm.pokerapp.database.DatabaseHelper
 
 class MainActivity : AppCompatActivity() {
 
-    val database: SQLiteDatabase = DatabaseHelper.database
+    private var databaseHelper: DatabaseHelper? = null
+    private var database : SQLiteDatabase? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
         setContentView(R.layout.activity_main)
-        createDatabase()
+        //DatabaseHelper.initDatabase()
+        //database = DatabaseHelper.database
+        //createDatabase()
         //enterData();
+    }
+
+    override fun onRequestPermissionsResult(requestCode : Int ,
+                                            permissions: Array<String>,
+                                            grantResults: IntArray){
+        // Todo check fail
+        databaseHelper = DatabaseHelper(this)
+        DatabaseHelper.initDatabase(databaseHelper!!.writableDatabase)
+        database = DatabaseHelper.getDatabase()
+        createDatabase()
+        enterData()
     }
 
     fun managePlayers(view: View) {
@@ -51,17 +68,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun createDatabase() {
         for (sql in resources.getStringArray(R.array.create)) {
-            database.execSQL(sql)
+            database!!.execSQL(sql)
         }
     }
 
     fun enterData() {
         for (sql in resources.getStringArray(R.array.dropEverything)) {
-            database.execSQL(sql)
+            database!!.execSQL(sql)
         }
         createDatabase()
         for (sql in resources.getStringArray(R.array.oldEvenings)) {
-            database.execSQL(sql)
+            database!!.execSQL(sql)
         }
     }
 

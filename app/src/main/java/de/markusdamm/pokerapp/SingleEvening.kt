@@ -11,11 +11,6 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
-
-import java.text.ParseException
-import java.util.ArrayList
-import java.util.Date
-
 import de.markusdamm.pokerapp.data.Evening
 import de.markusdamm.pokerapp.data.Location
 import de.markusdamm.pokerapp.data.Placement
@@ -23,6 +18,8 @@ import de.markusdamm.pokerapp.data.Player
 import de.markusdamm.pokerapp.database.DatabaseHelper
 import de.markusdamm.pokerapp.utils.DateFormats
 import de.markusdamm.pokerapp.utils.Utils
+import java.text.ParseException
+import java.util.*
 
 
 class SingleEvening : AppCompatActivity() {
@@ -32,7 +29,7 @@ class SingleEvening : AppCompatActivity() {
     private var time: EditText? = null
     private var name: EditText? = null
     private var loc: EditText? = null
-    private var database: SQLiteDatabase = DatabaseHelper.database
+    private var database: SQLiteDatabase = DatabaseHelper.getDatabase()
     private var evName: String? = null
     private var lvPlayers: ListView? = null
 
